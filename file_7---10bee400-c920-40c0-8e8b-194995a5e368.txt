@@ -1,0 +1,9 @@
+我刚刚和Paymongo的Jojo Cameron还有他的Elaine见了面
+Jojo是他的CEO对我们的事情很感兴趣
+然后现在跟Paymongo这边就是我们的P2M的payment已经integrate了
+但是现在我们还有一个unterpayment还没有integrate
+所以现在技术方面的话我们要做integration
+另外的话就是在产品方面需要去跟Cameron他们去discuss一下campaign怎么做
+然后另外的话我需要给他发一个我们的service agreement他们需要签
+然后另外Jojo他还mention到想要做个PR release
+这是一个事情需要follow的

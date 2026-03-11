@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "skills": {
+    "self-improving-agent": {
+      "version": "1.0.11",
+      "installedAt": 1772710245004
+    },
+    "seedance-2-video-gen": {
+      "version": "1.4.1",
+      "installedAt": 1772711294671
+    },
+    "agent-team-builder": {
+      "version": "0.1.0",
+      "installedAt": 1772750893745
+    },
+    "openclaw-tavily-search": {
+      "version": "0.1.0",
+      "installedAt": 1773052111993
+    }
+  }
+}

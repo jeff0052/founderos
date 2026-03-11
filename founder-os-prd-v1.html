@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Founder OS V1.0 产品需求文档 (PRD)</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background: white;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            font-size: 2.2em;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        h3 {
+            color: #2c3e50;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        h4 {
+            color: #555;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 25px;
+        }
+        
+        li {
+            margin-bottom: 5px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+        }
+        
+        pre {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.85em;
+            line-height: 1.4;
+        }
+        
+        .meta-info {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+        
+        .meta-info p {
+            margin: 5px 0;
+        }
+        
+        .highlight {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            margin: 30px 0;
+        }
+        
+        .emoji {
+            font-size: 1.2em;
+        }
+        
+        @media print {
+            body {
+                padding: 20px;
+            }
+            
+            h1, h2, h3 {
+                page-break-after: avoid;
+            }
+            
+            table, pre {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1><span class="emoji">🚀</span> Founder OS V1.0 产品需求文档 (PRD)</h1>
+
+    <div class="meta-info">
+        <p><strong>文档状态:</strong> V1.0 (最小可行性产品 MVP)</p>
+        <p><strong>产品定位:</strong> 专为超级个体/初创 CEO 打造的"数字企业 ERP 与虚拟高管调度中心"</p>
+        <p><strong>核心信条:</strong> 软件设计即组织设计。消灭聊天框，让创始人回归"决策者"角色，而非"提示词打字员"</p>
+    </div>
+
+    <hr>
+
+    <h2>一、产品愿景与设计哲学 (Vision & Philosophy)</h2>
+
+    <h3>1. 核心痛点</h3>
+    <ul>
+        <li><strong>极度的上下文切换：</strong> 创始人每天在几十个 SaaS 工具、数据报表和群聊中切换，缺乏统一的指令下达出口</li>
+        <li><strong>AI 系统的"大企业病"：</strong> 市面的多 Agent 框架本质是"大模型自由群聊"，导致极高的沟通摩擦（协调成本 > 产出）、上下文污染和幻觉</li>
+        <li><strong>安全与越权恐惧：</strong> 不敢把公司核心业务 API 和资金权限交给大模型自由决断，害怕 AI "发疯"造成不可挽回的灾难</li>
+    </ul>
+
+    <h3>2. 管理学映射的设计原则</h3>
+    <ul>
+        <li><strong>部门边界极简 (Workspace)：</strong> MVP 版本只有 1 个大盘和 1 个员工（幕僚长）。拒绝"差生文具多"，避免跨部门协调成本</li>
+        <li><strong>培训优于招人 (Skill > Agent)：</strong> 遇到新需求，优先为幕僚长加载新 Skill（SOP 注入），认知爆表前绝不新建 Agent</li>
+        <li><strong>保护认知负荷 (Context Window)：</strong> 采用"按需知晓 (Need to know)"原则，任务完成立刻清空上下文，绝不全量加载知识库</li>
+        <li><strong>按错误成本划分权限 (Cron vs Approval)：</strong> 低风险操作走后台静默 Cron；高风险操作强制拦截，生成「审批卡片」让人类在环</li>
+    </ul>
+
+    <hr>
+
+    <h2>二、系统三层架构选型 (Architecture Stack)</h2>
+
+    <p>采用 "胖底座，强中间件，薄应用" 的三层架构：</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>层级</th>
+                <th>技术选型</th>
+                <th>核心职责</th>
+                <th>管理学映射</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>展现层 (UI/UX)</td>
+                <td>Next.js + TailwindCSS</td>
+                <td>CEO 指挥中心（全局指令、审批收件箱、大盘）。绝对禁止提供对话气泡界面</td>
+                <td>老板的办公桌与可视化看板</td>
+            </tr>
+            <tr>
+                <td>中间件 (Middleware)</td>
+                <td>Node.js (NestJS) / Python</td>
+                <td>拦截高危操作挂起、管理记忆垃圾回收 (GC)、强制校验交接格式</td>
+                <td>制度合规部、流程审批枢纽</td>
+            </tr>
+            <tr>
+                <td>底座层 (The Engine)</td>
+                <td>IronClaw (Rust)</td>
+                <td>WASM沙盒物理隔离、加密密钥金库(Vault)、底层定时心跳唤醒</td>
+                <td>物理安保、基础设施、员工脑力</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h2>三、核心功能模块与 UI 规约 (Core Modules)</h2>
+
+    <h3>模块 1：全局指挥舱 (Cmd+K Command Bar) [优先级：P0]</h3>
+
+    <p><strong>描述：</strong> 创始人唯一的交互入口，彻底替代冗长的对话框，类似 Mac Spotlight</p>
+
+    <p><strong>用户故事：</strong> 作为 CEO，我需要随时下达模糊指令并立刻关掉窗口去忙别的，系统应在后台自动拆解执行</p>
+
+    <p><strong>功能需求：</strong></p>
+    <ul>
+        <li>在任何界面按 Cmd+K 唤出居中悬浮输入框</li>
+        <li>支持自然语言输入（例："下周产品发布，起草一封给早期用户的预热邮件，并在推特上发条 Teaser"）</li>
+        <li>敲击 Enter 后，输入框立刻消失，系统右上角弹出静默 Toast 提示："🚀 任务已指派给幕僚长..."</li>
+    </ul>
+
+    <h3>模块 2：决策收件箱 (Approval Inbox) [优先级：P0] —— 核心商业壁垒</h3>
+
+    <p><strong>描述：</strong> Founder OS 的主界面（视觉 C 位），拦截所有高风险 AI 操作，强制人类在环审批</p>
+
+    <p><strong>触发条件：</strong> 调用带有 High-Risk 标签的 Skill（如：发邮件、退款、改代码）时，中间件将底层的 WASM 进程强行挂起（Suspend）</p>
+
+    <p><strong>审批卡片 (Approval Card) 要素：</strong></p>
+    <ul>
+        <li><strong>意图摘要：</strong> AI 为什么要做这件事（如：监控到竞品降价，故生成应对邮件）</li>
+        <li><strong>执行预览：</strong> 即将发出的邮件正文 / 预估消耗金额 / API Payload 明文对比</li>
+        <li><strong>三大操作按钮：</strong>
+            <ul>
+                <li>✅ <strong>Approve (批准)：</strong> 中间件向 IronClaw 发送放行指令，注入 Vault 密钥，执行最后一步</li>
+                <li>❌ <strong>Reject (拒绝)：</strong> 任务终止，要求填写一行拒绝原因（如："语气太凶了"），打回重写</li>
+                <li>✏️ <strong>Modify (修改)：</strong> 允许创始人直接在卡片上修改邮件措辞或参数，保存并放行</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h3>模块 3：自动化大盘 (Silent Dashboard) [优先级：P1]</h3>
+
+    <p><strong>描述：</strong> 反映低风险、重复性 Cron 任务成果的只读数据看板</p>
+
+    <p><strong>功能需求：</strong></p>
+    <ul>
+        <li><strong>无交互纯展示：</strong> 好员工应该自己把报表画好放在老板桌上。没有任何输入框</li>
+        <li><strong>数据流转：</strong> 由 IronClaw 底层的 Cron 定时触发 WASM Skill 抓取数据，提炼为 JSON 写入中间件数据库，前端实时拉取渲染</li>
+        <li><strong>组件示例：</strong> 昨日 MRR 增量、竞品动态红绿灯、高优待处理客诉数量</li>
+    </ul>
+
+    <h3>模块 4：渐进式记忆与 SOP 系统 (Progressive Memory) [优先级：P1]</h3>
+
+    <ul>
+        <li><strong>L1 全局价值观 (Global_Memory.md)：</strong> 限 300 字，永久注入所有指令。定义公司使命和创始人沟通红线（例："对外口吻专业克制，绝不说废话"）</li>
+        <li><strong>L3 动态 SOP 挂载：</strong> 允许为 Skill 上传 Markdown 格式的 SOP。平时不占用 Token，只有触发对应意图时才瞬间加载（按需知晓原则）</li>
+        <li><strong>L4 强制垃圾回收 (Garbage Collection)：</strong> 任务在 Inbox 被 Approve 并执行完毕后，触发中间件逻辑：生成一句话核心结论归档，立刻强制清空本次会话的上下文，防止系统越用越卡</li>
+    </ul>
+
+    <hr>
+
+    <h2>四、MVP 核心业务闭环流转说明 (Key Workflows)</h2>
+
+    <p>为了"吃自己的狗粮"并验证商业逻辑，V1.0 必须跑通以下两条极简的业务线：</p>
+
+    <h3>用例 A：绿区静默自动化 (映射"规则明确的 Cron")</h3>
+
+    <ol>
+        <li><strong>触发：</strong> IronClaw 底层 Cron 每天早上 8:00 唤醒"幕僚长"</li>
+        <li><strong>执行：</strong> 调用被赋予的 Fetch_SaaS_Metrics Skill（只读属性，低风险）</li>
+        <li><strong>处理：</strong> 抓取 Stripe 报表，提取 3 个核心指标</li>
+        <li><strong>输出：</strong> 直接写入 Dashboard 数据库。全过程零老板干预，CEO 9 点打开 OS 界面即看</li>
+    </ol>
+
+    <h3>用例 B：红区任务审批流 (映射"高风险决策交接")</h3>
+
+    <ol>
+        <li><strong>指令：</strong> CEO 通过 Cmd+K 输入："给最近流失的用户 John 发一封邮件，提供 8 折挽留"</li>
+        <li><strong>规划：</strong> 幕僚长理解意图，加载《挽回客户 SOP》，调用 Send_Email Skill</li>
+        <li><strong>拦截：</strong> 中间件发现该 Skill 属于红区动作，立刻挂起底层执行进程</li>
+        <li><strong>展示：</strong> 前端 Approval Inbox 生成审批卡片，展示生成的打折邮件草稿</li>
+        <li><strong>决策：</strong> CEO 点击卡片上的 Modify，把 8 折改成了 9 折，然后点击 Approve</li>
+        <li><strong>执行：</strong> 中间件携带修改后的参数，向 IronClaw 放行。底层从加密金库提取 SendGrid Key 正式发信。任务状态变更为"Done"，触发垃圾回收清空上下文</li>
+    </ol>
+
+    <hr>
+
+    <h2>五、数据流与接口规约 (Handoff Contract)</h2>
+
+    <p>为了彻底消灭"我以为你知道"的协作灾难，所有内部任务派发必须符合强类型 JSON Schema：</p>
+
+    <pre><code>// Agent调取复杂Skill时的强制Payload格式
+{
+  "task_id": "REQ-1024",
+  "from": "Chief_of_Staff",
+  "to": "Skill_Stripe_Refund",
+  "context": "大客户John提出退款要求，历史无违规记录。",
+  "goal": "执行全额退款 $500",
+  "constraints": [
+    "若检测到订单已超过 30 天，必须抛出 Error，严禁静默失败"
+  ]
+}</code></pre>
+
+    <div class="highlight">
+        <p><strong>注：</strong> 若底层大模型输出的 JSON 不符合此 Schema，中间件将直接在后台发起重试，绝不将乱码或 Debug 代码推给前台老板审批。</p>
+    </div>
+
+    <hr>
+
+    <h2>六、研发排期与里程碑 (3-Sprint Roadmap)</h2>
+
+    <p><strong>预估周期：</strong> 3 - 4 周（单人全栈 / 2人敏捷小队）</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>阶段</th>
+                <th>核心任务</th>
+                <th>验收标准 (DoD)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Week 1<br/>底层基建</strong></td>
+                <td>1. 私有化部署 IronClaw Rust 引擎<br/>2. 建立加密 Vault 并放入测试密钥<br/>3. 编写 2 个 WASM 测试技能（1 绿 1 红）</td>
+                <td>通过 CLI 能成功调起 IronClaw WASM 沙盒，且测试动作能被底层安全策略捕捉</td>
+            </tr>
+            <tr>
+                <td><strong>Week 2<br/>核心中间件</strong></td>
+                <td>1. 开发 Node.js/Python API 网关<br/>2. 开发审批拦截器：拦截红区动作并存入 DB (Status: Pending)<br/>3. 开发认知负荷清道夫 (GC) 逻辑</td>
+                <td>发起高危请求时，IronClaw 暂停执行，DB 成功生成结构化待办记录</td>
+            </tr>
+            <tr>
+                <td><strong>Week 3<br/>CEO 面板</strong></td>
+                <td>1. Next.js 搭建 Cmd+K 组件<br/>2. 开发 Approval Inbox UI 及卡片<br/>3. 联调前端 Approve 动作与底层放行逻辑</td>
+                <td>前端点击 Approve 后，底层的 IronClaw 恢复执行并真实发出测试邮件</td>
+            </tr>
+            <tr>
+                <td><strong>Week 4<br/>测试闭环</strong></td>
+                <td>1. 完善 Dashboard 数据渲染<br/>2. 创始人"吃狗粮"内测真实业务场景</td>
+                <td>跑通"早上自动出报表"与"人工审批发邮件"两个完整 User Journey</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h2>七、成功指标与安全红线 (Success Metrics & NFR)</h2>
+
+    <h3>安全指标</h3>
+    <ul>
+        <li><strong>零 Token 泄漏 (Security First)：</strong> 在任何前端代码、中间件数据库、乃至大模型的 Prompt 日志中，绝对不能出现第三方 SaaS 的 API Key 明文。必须 100% 依赖 Vault 的最后一公里注入</li>
+    </ul>
+
+    <h3>效率指标</h3>
+    <ul>
+        <li><strong>审批决策时长 (Time-to-Decision)：</strong> 创始人在 Inbox 中处理一张审批卡片的平均时间目标为 < 15秒。（说明 AI 总结的 Diff 足够清晰，无需追问即可拍板）</li>
+        <li><strong>静默执行率 (Silent Execution Rate)：</strong> 由 Cron 触发且无需老板干预成功跑完的任务比例目标为 > 60%</li>
+    </ul>
+
+    <hr>
+
+    <div style="text-align: center; margin-top: 40px; padding: 20px; background-color: #f8f9fa; border-radius: 5px;">
+        <p><strong>文档版本：</strong> V1.0</p>
+        <p><strong>最后更新：</strong> 2026年3月11日</p>
+        <p><strong>下一版本计划：</strong> 待 MVP 验证后制定 V1.1 路线图</p>
+    </div>
+
+</body>
+</html>
