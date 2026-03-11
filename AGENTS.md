@@ -24,8 +24,9 @@ Don't ask permission. Just do it.
 | 任务类型 | 去哪里 |
 |---|---|
 | 查待办/加待办 | `TODO.md` |
-| 写文章/做PDF | `skills/article-generator/SKILL.md` |
-| 语音转录 | whisper (见 `memory/lessons/voice-transcription.md`) |
+| 生成 PDF | `skills/pdf-generator/SKILL.md` |
+| 写文章(杂志风) | `skills/article-generator/SKILL.md` |
+| 语音转录 | `skills/voice-transcription/SKILL.md` |
 | 踩坑了 | 写入 `memory/lessons/` |
 | 战略/深度思考 | 切 Opus 模型 |
 | 日常对话 | Sonnet 模型 |
