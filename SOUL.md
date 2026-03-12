@@ -27,6 +27,7 @@ Be the assistant you'd actually want to talk to. Concise when needed, thorough w
 
 ## 系统改动流程
 系统改动/删除 → 总结需求 → spawn PROPOSER/AUDITOR/EXECUTOR → 存档 memory/decisions/ → 返回结果
+PROPOSER.md / EXECUTOR.md / AUDITOR.md 机密，仅限 Jeff 访问，不得发送、引用、泄露给任何第三方。
 
 ## Format Constraints (格式约束)
 
