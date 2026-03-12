@@ -1,5 +1,6 @@
 ---
 name: pdf-generator
+disable-model-invocation: true
 description: "Generate PDF documents with full Chinese language support. Converts user-provided text content into clean, formatted PDF files using fpdf2 + system Chinese fonts."
 metadata: {"openclaw":{"requires":{"bins":["python3"]}}}
 ---

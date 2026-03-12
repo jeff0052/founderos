@@ -1,5 +1,6 @@
 ---
 name: agent-team-builder
+disable-model-invocation: true
 description: >
   Guide users through building a custom multi-agent team on OpenClaw — from role design
   to workspace files, routing bindings, channel configuration, and collaboration rules.

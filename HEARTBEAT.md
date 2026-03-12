@@ -1,5 +1,8 @@
 # HEARTBEAT.md
 
-# Keep this file empty (or with only comments) to skip heartbeat API calls.
+# Context 大小监控
+检查 session_status，如果 context >100k 提醒用户新开 session 避免限流
 
-# Add tasks below when you want the agent to check something periodically.
+# 可选：系统健康检查
+- 检查是否有未处理的错误
+- 检查内存使用情况

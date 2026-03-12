@@ -1,5 +1,6 @@
 ---
 name: article-generator
+disable-model-invocation: true
 description: "Generate beautifully styled Chinese long-form articles as HTML + PDF. Magazine-quality layout with dark hero, terminal blocks, comparison cards, timelines, pyramids, and info cards. User provides markdown-style content, agent generates the full article."
 metadata: {"openclaw":{"requires":{"bins":["bash"]}}}
 ---

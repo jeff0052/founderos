@@ -1,0 +1,49 @@
+{
+  "sessions": {
+    "main": {
+      "name": "🏠 主对话",
+      "contextSize": 21,
+      "lastActivity": 1773255625638,
+      "description": "日常对话和任务"
+    },
+    "slot_1": {
+      "name": "➕ 新建 1",
+      "contextSize": 0,
+      "lastActivity": null,
+      "description": "点击创建新的对话空间",
+      "isEmpty": true
+    },
+    "slot_2": {
+      "name": "➕ 新建 2",
+      "contextSize": 0,
+      "lastActivity": null,
+      "description": "点击创建新的对话空间",
+      "isEmpty": true
+    },
+    "slot_3": {
+      "name": "➕ 新建 3",
+      "contextSize": 0,
+      "lastActivity": null,
+      "description": "点击创建新的对话空间",
+      "isEmpty": true
+    },
+    "slot_4": {
+      "name": "➕ 新建 4",
+      "contextSize": 0,
+      "lastActivity": null,
+      "description": "点击创建新的对话空间",
+      "isEmpty": true
+    },
+    "slot_5": {
+      "name": "➕ 新建 5",
+      "contextSize": 0,
+      "lastActivity": null,
+      "description": "点击创建新的对话空间",
+      "isEmpty": true
+    }
+  },
+  "currentSession": "main",
+  "lastActivity": 1773255625632,
+  "lastTopicKeywords": [],
+  "lastShowTime": 0
+}

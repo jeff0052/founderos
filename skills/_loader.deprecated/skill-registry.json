@@ -1,0 +1,163 @@
+{
+  "skills": {
+    "pdf-generator": {
+      "triggers": ["pdf", "文档", "生成", "导出", "打印", "报告"],
+      "patterns": [
+        "生成.*pdf",
+        "制作.*文档", 
+        "导出.*文件",
+        "pdf.*格式",
+        "打印.*文档"
+      ],
+      "complexity": "medium",
+      "frequency": "common",
+      "category": "document",
+      "priority": 8
+    },
+    "voice-transcription": {
+      "triggers": ["语音", "转录", "音频", "声音", "听写", "录音"],
+      "patterns": [
+        "转录.*语音",
+        "语音.*文字",
+        "听写.*内容",
+        "音频.*文本"
+      ],
+      "complexity": "high", 
+      "frequency": "common",
+      "category": "media",
+      "priority": 7
+    },
+    "session-manager": {
+      "triggers": ["session", "空间", "切换", "对话框", "会话"],
+      "patterns": [
+        "\\/sessions?",
+        "当前.*session",
+        "切换.*空间",
+        "哪个.*session",
+        "在哪.*空间"
+      ],
+      "complexity": "low",
+      "frequency": "high", 
+      "category": "system",
+      "priority": 9,
+      "alwaysLoad": true
+    },
+    "article-generator": {
+      "triggers": ["文章", "写作", "杂志", "长文", "内容"],
+      "patterns": [
+        "写.*文章",
+        "杂志.*风格",
+        "长.*文章",
+        "生成.*文章"
+      ],
+      "complexity": "high",
+      "frequency": "rare",
+      "category": "content",
+      "priority": 5
+    },
+    "self-improving-agent": {
+      "auto": true,
+      "triggers": ["错误", "失败", "学习", "改进", "记录"],
+      "patterns": [
+        "踩坑",
+        "出错",
+        "失败",
+        "学到",
+        "教训"
+      ],
+      "passive": true,
+      "frequency": "auto",
+      "category": "system",
+      "priority": 10,
+      "alwaysLoad": true
+    },
+    "openclaw-tavily-search": {
+      "triggers": ["搜索", "查找", "search", "tavily"],
+      "patterns": [
+        "tavily.*搜索",
+        "搜索.*网页",
+        "查找.*信息"
+      ],
+      "complexity": "medium",
+      "frequency": "rare",
+      "category": "search",
+      "priority": 4,
+      "conditions": ["web_search_unavailable"]
+    },
+    "agent-team-builder": {
+      "triggers": ["团队", "多智能体", "agent", "协作", "配置"],
+      "patterns": [
+        "建.*团队",
+        "多.*agent",
+        "智能体.*协作",
+        "agent.*团队"
+      ],
+      "complexity": "very_high",
+      "frequency": "rare", 
+      "category": "system",
+      "priority": 3
+    },
+    "seedance-2-video-gen": {
+      "triggers": ["视频", "生成", "动画", "seedance"],
+      "patterns": [
+        "生成.*视频",
+        "制作.*动画",
+        "视频.*生成"
+      ],
+      "complexity": "very_high",
+      "frequency": "rare",
+      "category": "media",
+      "priority": 2
+    }
+  },
+  "categories": {
+    "system": {
+      "description": "系统管理和配置",
+      "alwaysCheck": true
+    },
+    "document": {
+      "description": "文档生成和处理",
+      "commonUse": true
+    },
+    "media": {
+      "description": "音频视频处理",
+      "resourceIntensive": true
+    },
+    "content": {
+      "description": "内容创作",
+      "creativeTasks": true
+    },
+    "search": {
+      "description": "信息检索",
+      "fallback": ["web_search"]
+    }
+  },
+  "fallback": ["self-improving-agent", "session-manager"],
+  "settings": {
+    "maxConcurrentSkills": 3,
+    "confidenceThreshold": 0.15,
+    "enableAutoLoad": true,
+    "enableCaching": true,
+    "logMatching": true,
+    "priorityWeighting": true
+  },
+  "matchingStrategies": {
+    "exactKeyword": {
+      "weight": 0.6,
+      "caseSensitive": false
+    },
+    "patternMatch": {
+      "weight": 0.4,
+      "useRegex": true
+    },
+    "frequencyBonus": {
+      "weight": 0.2,
+      "values": {
+        "high": 0.2,
+        "common": 0.1,
+        "rare": -0.02,
+        "auto": 0.15
+      }
+    }
+  }
+}
