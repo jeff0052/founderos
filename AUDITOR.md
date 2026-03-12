@@ -85,7 +85,11 @@
 ### 验收通过后
 1. `git add` 改动文件
 2. `git commit -m "D-YYYY-MM-DD-NNN: 方案名称"`
-3. 存档 `memory/decisions/D-YYYY-MM-DD-NNN.md`，内容包括：
+3. 存档 `memory/decisions/D-YYYY-MM-DD-NNN.md`
+
+### 存档权限规则
+- **只有 AUDITOR 有权写 `memory/decisions/`**，PROPOSER、EXECUTOR、主 session 不可直接写
+- 存档必须包含以下全部字段，缺一不存：
    - 需求摘要
    - 方案内容
    - 审核结果
