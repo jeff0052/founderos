@@ -73,7 +73,8 @@ def bootstrap(store: "Store", narratives_dir: str,
     # Step 5: 组装认知包 (降级: 失败 → 最小 bundle)
     try:
         ctx = bundle.assemble(
-            store, focus_result, dashboard_md, alerts_md, max_tokens,
+            store, focus_result, dashboard_md, alerts_md,
+            narratives_dir=narratives_dir, max_tokens=max_tokens,
         )
     except Exception:
         ctx = ContextBundle(

@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 from typing import Dict, Generator, List, Optional
 
 from .models import Node, Edge
-from .schema import get_connection
+from .schema import init_db
 
 
 # node_type -> id prefix
@@ -72,7 +72,7 @@ def _row_to_edge(row: sqlite3.Row) -> Edge:
 class Store:
     def __init__(self, db_path: str, events_path: str) -> None:
         self.db_path = db_path
-        self._conn = get_connection(db_path)
+        self._conn = init_db(db_path)
         self._conn.row_factory = sqlite3.Row
         # Disable autocommit so we control transactions manually
         self._conn.isolation_level = "DEFERRED"

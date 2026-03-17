@@ -1,0 +1,17 @@
+{
+  "float_scanner": {
+    "enabled": true,
+    "paths": ["src/payments/**/*.py", "src/wallet/**/*.py", "src/settlement/**/*.py", "src/fees/**/*.py"],
+    "whitelist": ["tests/**", "scripts/**", "docs/**", ".venv/**", "vendor/**"]
+  },
+  "test_lock": {
+    "enabled": true,
+    "protected_dir": "tests/invariants/",
+    "hash_file": ".invariant_hashes.json"
+  },
+  "core_path_gate": {
+    "enabled": true,
+    "core_paths": ["src/payments/core/**", "src/settlement/**", "src/wallet/core/**", "src/fees/**", ".invariant_hashes.json", "constitution_guard.json", "tools/constitution_guard/**"],
+    "approvers": ["jeff"]
+  }
+}

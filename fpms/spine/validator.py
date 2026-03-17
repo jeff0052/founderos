@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import sqlite3
 from typing import List, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -38,13 +37,6 @@ class ValidationError(Exception):
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
-
-def _db_path(store: "Store") -> str:
-    for attr in ("db_path", "_db_path"):
-        if hasattr(store, attr):
-            return getattr(store, attr)
-    raise AttributeError("Cannot find db_path on store")
-
 
 # ---------------------------------------------------------------------------
 # validate_status_transition
@@ -133,56 +125,51 @@ def validate_dag_safety(
     edge_type: str,
 ) -> None:
     """统一 DAG 环路检测（WITH RECURSIVE CTE）。有环则 raise ValidationError。"""
-    db = _db_path(store)
-    conn = sqlite3.connect(db)
-    conn.execute("PRAGMA foreign_keys=ON")
-    try:
-        # Check: can source_id be reached from target_id via existing edges?
-        # If yes, adding source->target would create a cycle.
-        row = conn.execute(
-            """
-            WITH RECURSIVE reachable(id) AS (
-                SELECT ?
-                UNION
-                SELECT e.target_id FROM edges e
-                JOIN reachable r ON e.source_id = r.id
-                WHERE e.edge_type IN ('parent', 'depends_on')
-            )
-            SELECT 1 FROM reachable WHERE id = ?
-            """,
-            (target_id, source_id),
-        ).fetchone()
-        if row:
-            raise ValidationError(
-                code="CYCLE_DETECTED",
-                message=f"Adding edge {source_id!r} -> {target_id!r} ({edge_type}) would create a cycle.",
-                suggestion="Review the dependency/parent graph and remove a conflicting edge first.",
-            )
+    conn = store._conn
+    # Check: can source_id be reached from target_id via existing edges?
+    # If yes, adding source->target would create a cycle.
+    row = conn.execute(
+        """
+        WITH RECURSIVE reachable(id) AS (
+            SELECT ?
+            UNION
+            SELECT e.target_id FROM edges e
+            JOIN reachable r ON e.source_id = r.id
+            WHERE e.edge_type IN ('parent', 'depends_on')
+        )
+        SELECT 1 FROM reachable WHERE id = ?
+        """,
+        (target_id, source_id),
+    ).fetchone()
+    if row:
+        raise ValidationError(
+            code="CYCLE_DETECTED",
+            message=f"Adding edge {source_id!r} -> {target_id!r} ({edge_type}) would create a cycle.",
+            suggestion="Review the dependency/parent graph and remove a conflicting edge first.",
+        )
 
-        # Cross-dimensional deadlock: child depends_on ancestor
-        if edge_type == "depends_on":
-            ancestors = conn.execute(
-                """
-                WITH RECURSIVE anc(id) AS (
-                    SELECT parent_id FROM nodes WHERE id = ?
-                    UNION
-                    SELECT n.parent_id FROM nodes n
-                    JOIN anc a ON n.id = a.id
-                    WHERE n.parent_id IS NOT NULL
-                )
-                SELECT id FROM anc WHERE id IS NOT NULL
-                """,
-                (source_id,),
-            ).fetchall()
-            ancestor_ids = {r[0] for r in ancestors}
-            if target_id in ancestor_ids:
-                raise ValidationError(
-                    code="CROSS_DIMENSION_DEADLOCK",
-                    message=f"Node {source_id!r} depends_on its ancestor {target_id!r} — cross-dimensional deadlock.",
-                    suggestion="A child node cannot depend on its own ancestor via depends_on.",
-                )
-    finally:
-        conn.close()
+    # Cross-dimensional deadlock: child depends_on ancestor
+    if edge_type == "depends_on":
+        ancestors = conn.execute(
+            """
+            WITH RECURSIVE anc(id) AS (
+                SELECT parent_id FROM nodes WHERE id = ?
+                UNION
+                SELECT n.parent_id FROM nodes n
+                JOIN anc a ON n.id = a.id
+                WHERE n.parent_id IS NOT NULL
+            )
+            SELECT id FROM anc WHERE id IS NOT NULL
+            """,
+            (source_id,),
+        ).fetchall()
+        ancestor_ids = {r[0] for r in ancestors}
+        if target_id in ancestor_ids:
+            raise ValidationError(
+                code="CROSS_DIMENSION_DEADLOCK",
+                message=f"Node {source_id!r} depends_on its ancestor {target_id!r} — cross-dimensional deadlock.",
+                suggestion="A child node cannot depend on its own ancestor via depends_on.",
+            )
 
 
 # ---------------------------------------------------------------------------
@@ -192,18 +179,13 @@ def validate_dag_safety(
 def validate_attach(store: "Store", node_id: str, new_parent_id: str) -> None:
     """综合校验 attach: 活跃域 + DAG 安全。"""
     # Check parent is not archived
-    db = _db_path(store)
-    conn = sqlite3.connect(db)
-    conn.execute("PRAGMA foreign_keys=ON")
-    try:
-        row = conn.execute(
-            "SELECT id, title, status, node_type, is_root, parent_id, summary, "
-            "why, next_step, owner, deadline, is_persistent, created_at, updated_at, "
-            "status_changed_at, archived_at FROM nodes WHERE id = ?",
-            (new_parent_id,),
-        ).fetchone()
-    finally:
-        conn.close()
+    conn = store._conn
+    row = conn.execute(
+        "SELECT id, title, status, node_type, is_root, parent_id, summary, "
+        "why, next_step, owner, deadline, is_persistent, created_at, updated_at, "
+        "status_changed_at, archived_at FROM nodes WHERE id = ?",
+        (new_parent_id,),
+    ).fetchone()
 
     if row is None:
         raise ValidationError(
@@ -241,18 +223,13 @@ def validate_dependency(store: "Store", source_id: str, target_id: str) -> None:
         )
 
     # Check target is not archived
-    db = _db_path(store)
-    conn = sqlite3.connect(db)
-    conn.execute("PRAGMA foreign_keys=ON")
-    try:
-        row = conn.execute(
-            "SELECT id, title, status, node_type, is_root, parent_id, summary, "
-            "why, next_step, owner, deadline, is_persistent, created_at, updated_at, "
-            "status_changed_at, archived_at FROM nodes WHERE id = ?",
-            (target_id,),
-        ).fetchone()
-    finally:
-        conn.close()
+    conn = store._conn
+    row = conn.execute(
+        "SELECT id, title, status, node_type, is_root, parent_id, summary, "
+        "why, next_step, owner, deadline, is_persistent, created_at, updated_at, "
+        "status_changed_at, archived_at FROM nodes WHERE id = ?",
+        (target_id,),
+    ).fetchone()
 
     if row is None:
         raise ValidationError(
