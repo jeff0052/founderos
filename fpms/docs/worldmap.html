@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FounderOS — World Map</title>
+<style>
+  .login-overlay {
+    position: fixed; inset: 0; background: #0a0a0f;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999; flex-direction: column;
+  }
+  .login-overlay.hidden { display: none; }
+  .login-box { text-align: center; }
+  .login-box h1 {
+    font-size: 32px; font-weight: 700;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .login-box .sub { color: #8888a0; font-size: 14px; margin-bottom: 32px; }
+  .login-box input {
+    background: #1a1a26; border: 1px solid #2a2a3a; border-radius: 12px;
+    padding: 14px 20px; color: #e0e0e8; font-size: 16px; width: 260px;
+    text-align: center; outline: none; -webkit-text-security: disc;
+  }
+  .login-box input:focus { border-color: #6366f1; }
+  .login-box .error { color: #ef4444; font-size: 13px; margin-top: 12px; min-height: 20px; }
+  .login-box button {
+    display: block; margin: 16px auto 0;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    border: none; border-radius: 12px; padding: 12px 40px;
+    color: white; font-size: 15px; font-weight: 600; cursor: pointer;
+  }
+  .dashboard-content.locked { display: none; }
+
+  :root {
+    --bg: #0a0a0f; --surface: #12121a; --surface2: #1a1a26;
+    --border: #2a2a3a; --text: #e0e0e8; --text-dim: #8888a0;
+    --accent: #6366f1; --green: #22c55e; --yellow: #eab308;
+    --red: #ef4444; --blue: #3b82f6; --orange: #f97316;
+    --purple: #a855f7; --cyan: #06b6d4;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    background: var(--bg); color: var(--text); padding: 24px; min-height: 100vh;
+  }
+  .header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--border);
+  }
+  .header h1 {
+    font-size: 28px; font-weight: 700;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .nav { display: flex; gap: 12px; }
+  .nav a {
+    color: var(--text-dim); text-decoration: none; font-size: 14px;
+    padding: 6px 16px; border-radius: 8px; border: 1px solid var(--border);
+  }
+  .nav a:hover, .nav a.active { color: var(--accent); border-color: var(--accent); }
+
+  .section { margin-bottom: 24px; }
+  .section-title {
+    font-size: 12px; color: var(--text-dim); text-transform: uppercase;
+    letter-spacing: 2px; margin-bottom: 16px; padding-left: 4px;
+  }
+
+  /* Global stats */
+  .global-stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 16px; margin-bottom: 24px;
+  }
+  .gs-card {
+    background: var(--surface); border-radius: 14px; padding: 18px;
+    border: 1px solid var(--border);
+  }
+  .gs-card .num { font-size: 24px; font-weight: 700; margin-bottom: 2px; }
+  .gs-card .lbl { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+  .gs-card .trend { font-size: 11px; margin-top: 6px; }
+
+  /* Country table */
+  .country-table {
+    background: var(--surface); border-radius: 16px;
+    border: 1px solid var(--border); overflow: hidden;
+  }
+  .ct-header {
+    display: grid; grid-template-columns: 44px 1.2fr 0.8fr 0.8fr 0.7fr 0.8fr 0.6fr 80px;
+    gap: 8px; padding: 14px 20px; font-size: 11px; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: 1px;
+    border-bottom: 1px solid var(--border); background: var(--surface2);
+  }
+  .ct-row {
+    display: grid; grid-template-columns: 44px 1.2fr 0.8fr 0.8fr 0.7fr 0.8fr 0.6fr 80px;
+    gap: 8px; padding: 14px 20px; font-size: 13px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    transition: background 0.15s;
+  }
+  .ct-row:hover { background: var(--surface2); }
+  .ct-row .flag { font-size: 20px; }
+  .ct-row .name { font-weight: 500; }
+  .ct-row .sub { font-size: 11px; color: var(--text-dim); }
+  .ct-row .data { color: var(--text-dim); }
+  .ct-row .bar-cell { display: flex; align-items: center; gap: 8px; }
+  .mini-bar { width: 60px; height: 6px; background: var(--bg); border-radius: 3px; overflow: hidden; }
+  .mini-fill { height: 100%; border-radius: 3px; }
+  .ct-row .presence {
+    font-size: 11px; padding: 3px 10px; border-radius: 20px;
+    font-weight: 500; text-align: center; white-space: nowrap;
+  }
+
+  /* Regulation legend */
+  .reg-badge {
+    font-size: 11px; padding: 2px 8px; border-radius: 4px; font-weight: 500;
+  }
+
+  /* Competitors */
+  .comp-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .comp-card {
+    background: var(--surface); border-radius: 14px; padding: 20px;
+    border: 1px solid var(--border);
+  }
+  .comp-card .comp-name { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .comp-card .comp-type { font-size: 12px; color: var(--text-dim); margin-bottom: 12px; }
+  .comp-card .comp-stats { font-size: 13px; }
+  .comp-card .comp-stats div { padding: 3px 0; }
+  .comp-card .comp-stats .label { color: var(--text-dim); }
+
+  /* News / Signals */
+  .signal-list { display: grid; gap: 10px; }
+  .signal-item {
+    background: var(--surface); border-radius: 12px; padding: 16px 20px;
+    border: 1px solid var(--border); display: flex; gap: 16px; align-items: flex-start;
+  }
+  .signal-item .s-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .signal-item .s-content { flex: 1; }
+  .signal-item .s-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+  .signal-item .s-desc { font-size: 12px; color: var(--text-dim); }
+  .signal-item .s-tag {
+    font-size: 10px; padding: 2px 8px; border-radius: 10px;
+    margin-top: 6px; display: inline-block;
+  }
+
+  /* Our position */
+  .position-banner {
+    background: var(--surface); border-radius: 16px; padding: 24px;
+    border: 1px solid var(--accent); margin-bottom: 24px;
+  }
+  .position-banner h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+  .pos-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  }
+  .pos-card {
+    background: var(--surface2); border-radius: 12px; padding: 16px; text-align: center;
+  }
+  .pos-card .pos-emoji { font-size: 28px; margin-bottom: 8px; }
+  .pos-card .pos-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .pos-card .pos-desc { font-size: 12px; color: var(--text-dim); }
+  .pos-card .pos-markets {
+    margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+  }
+  .pos-card .pos-markets span {
+    font-size: 11px; padding: 2px 8px; border-radius: 10px;
+    background: rgba(99,102,241,0.1); color: var(--accent);
+  }
+
+  .updated {
+    text-align: center; color: var(--text-dim); font-size: 12px;
+    margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--border);
+  }
+  @media (max-width: 768px) {
+    .global-stats { grid-template-columns: repeat(2, 1fr); }
+    .ct-header, .ct-row { grid-template-columns: 36px 1fr 0.6fr 80px; }
+    .ct-header > :nth-child(3), .ct-row > :nth-child(3),
+    .ct-header > :nth-child(4), .ct-row > :nth-child(4),
+    .ct-header > :nth-child(5), .ct-row > :nth-child(5),
+    .ct-header > :nth-child(6), .ct-row > :nth-child(6) { display: none; }
+    .pos-grid { grid-template-columns: 1fr; }
+    .comp-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <h1>🌍 World Map</h1>
+    <div class="sub">FounderOS — 支付世界全景</div>
+    <input type="password" id="pwdInput" placeholder="Password" autofocus>
+    <div class="error" id="loginError"></div>
+    <button onclick="tryLogin()">Enter</button>
+  </div>
+</div>
+
+<div class="dashboard-content locked" id="dashboardContent">
+
+<div class="header">
+  <h1>🌍 World Map</h1>
+  <div class="nav">
+    <a href="index.html">📊 Dashboard</a>
+    <a href="worldmap.html" class="active">🌍 World Map</a>
+  </div>
+</div>
+
+<!-- Global Industry Stats -->
+<div class="section">
+  <div class="section-title">全球支付行业概览</div>
+  <div class="global-stats">
+    <div class="gs-card">
+      <div class="num" style="color: var(--accent);">$12.5T</div>
+      <div class="lbl">全球数字支付市场</div>
+      <div class="trend" style="color: var(--green);">↑ 15% YoY (2025)</div>
+    </div>
+    <div class="gs-card">
+      <div class="num" style="color: var(--cyan);">$190B</div>
+      <div class="lbl">稳定币总市值</div>
+      <div class="trend" style="color: var(--green);">↑ USDT $140B + USDC $35B</div>
+    </div>
+    <div class="gs-card">
+      <div class="num" style="color: var(--purple);">$800B</div>
+      <div class="lbl">跨境汇款市场</div>
+      <div class="trend" style="color: var(--yellow);">东南亚占 $80B+</div>
+    </div>
+    <div class="gs-card">
+      <div class="num" style="color: var(--green);">62%</div>
+      <div class="lbl">全球移动支付渗透率</div>
+      <div class="trend" style="color: var(--green);">↑ 东南亚增速最快</div>
+    </div>
+  </div>
+</div>
+
+<!-- Our Position -->
+<div class="position-banner">
+  <h2>⚡ Onta 征服地图</h2>
+  <div class="pos-grid">
+    <div class="pos-card">
+      <div class="pos-emoji">🏦</div>
+      <div class="pos-name" style="color: var(--blue);">Uniweb</div>
+      <div class="pos-desc">法币世界 · 合规网络</div>
+      <div class="pos-markets">
+        <span>🇸🇬 新加坡 HQ</span>
+        <span>🇭🇰 香港 (计划)</span>
+        <span>🇦🇺 澳洲 (计划)</span>
+      </div>
+    </div>
+    <div class="pos-card">
+      <div class="pos-emoji">🌐</div>
+      <div class="pos-name" style="color: var(--purple);">Onta Network</div>
+      <div class="pos-desc">Web3 世界 · 稳定币协议</div>
+      <div class="pos-markets">
+        <span>🇵🇭 菲律宾 (主攻)</span>
+        <span>🇯🇵 日本 (突破)</span>
+        <span>🇻🇳 越南 (临门)</span>
+        <span>🇹🇭 泰国</span>
+        <span>🇰🇷 韩国</span>
+        <span>🇳🇬 尼日利亚</span>
+        <span>🌐 Binance</span>
+      </div>
+    </div>
+    <div class="pos-card">
+      <div class="pos-emoji">💎</div>
+      <div class="pos-name" style="color: var(--cyan);">Vibecash</div>
+      <div class="pos-desc">AI 世界 · 开发者支付</div>
+      <div class="pos-markets">
+        <span>🌐 全球 (Phase 0)</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Country Data Table -->
+<div class="section">
+  <div class="section-title">各国支付市场数据</div>
+  <div class="country-table">
+    <div class="ct-header">
+      <div></div>
+      <div>国家</div>
+      <div>支付市场规模</div>
+      <div>移动支付渗透</div>
+      <div>稳定币监管</div>
+      <div>跨境汇款</div>
+      <div>竞争</div>
+      <div>我方</div>
+    </div>
+
+    <!-- Philippines -->
+    <div class="ct-row">
+      <div class="flag">🇵🇭</div>
+      <div><div class="name">菲律宾</div><div class="sub">1.15亿人口 · GDP $440B</div></div>
+      <div class="data">$25B</div>
+      <div class="bar-cell">
+        <div class="mini-bar"><div class="mini-fill" style="width: 55%; background: var(--green);"></div></div>
+        <span style="font-size:12px; color:var(--text-dim);">55%</span>
+      </div>
+      <div><span class="reg-badge" style="background: rgba(34,197,94,0.15); color: var(--green);">开放</span></div>
+      <div class="data">$38B/年</div>
+      <div class="data" style="color: var(--yellow);">中等</div>
+      <div><span class="presence" style="background: rgba(34,197,94,0.15); color: var(--green);">主攻</span></div>
+    </div>
+
+    <!-- Japan -->
+    <div class="ct-row">
+      <div class="flag">🇯🇵</div>
+      <div><div class="name">日本</div><div class="sub">1.25亿人口 · GDP $4.2T</div></div>
+      <div class="data">$350B</div>
+      <div class="bar-cell">
+        <div class="mini-bar"><div class="mini-fill" style="width: 35%; background: var(--yellow);"></div></div>
+        <span style="font-size:12px; color:var(--text-dim);">35%</span>
+      </div>
+      <div><span class="reg-badge" style="background: rgba(34,197,94,0.15); color: var(--green);">友好</span></div>
+      <div class="data">$5B/年</div>
+      <div class="data" style="color: var(--red);">高</div>
+      <div><span class="presence" style="background: rgba(34,197,94,0.15); color: var(--green);">突破</span></div>
+    </div>
+
+    <!-- Vietnam -->
+    <div class="ct-row">
+      <div class="flag">🇻🇳</div>
+      <div><div class="name">越南</div><div class="sub">1亿人口 · GDP $430B</div></div>
+      <div class="data">$18B</div>
+      <div class="bar-cell">
+        <div class="mini-bar"><div class="mini-fill" style="width: 45%; background: var(--green);"></div></div>
+        <span style="font-size:12px; color:var(--text-dim);">45%</span>
+      </div>
+      <div><span class="reg-badge" style="background: rgba(234,179,8,0.15); color: var(--yellow);">中性</span></div>
+      <div class="data">$18B/年</div>
+      <div class="data" style="color: var(--yellow);">中等</div>
+      <div><span class="presence" style="background: rgba(234,179,8,0.15); color: var(--yellow);">临门</span></div>
+    </div>
+
+    <!-- Singapore -->
+    <div class="ct-row">
+      <div class="flag">🇸🇬</div>
+      <div><div class="name">新加坡</div><div class="sub">600万人口 · GDP $500B</div></div>
+      <div class="data">$45B</div>
+      <div class="bar-cell">
+        <div class="mini-bar"><div class="mini-fill" style="width: 70%; background: var(--green);"></div></div>
+        <span style="font-size:12px; color:var(--text-dim);">70%</span>
+      </div>
+      <div><span class="reg-badge" style="background: rgba(34,197,94,0.15); color: var(--green);">领先</span></div>
+      <div class="data">$8B/年</div>
+      <div class="data" style="color: var(--red);">极高</div>
+      <div><span class="presence" style="background: rgba(168,85,247,0.15); color: var(--purple);">HQ</span></div>
+    </div>
+
+    <!-- Thailand -->
+    <div class="ct-row">
+      <div class="flag">🇹🇭</div>
+      <div><div class="name">泰国</div><div class="sub">7200万人口 · GDP $530B</div></div>
+      <div class="data">$28B</div>
+      <div class="bar-cell">
+        <div class="mini-bar"><div class="mini-fill" style="width: 65%; background: var(--green);"></div></div>
+        <span style="font-size:12px; color:var(--text-dim);">65%</span>
+      </div>
+      <div><span class="reg-badge" style="background: rgba(234,179,8,0.15); color: var(--yellow);">观望</span></div>
+      <div class="data">$12B/年</div>
+      <div class="data" style="color: var(--yellow);">中等</div>
+      <div><span class="presence" style="background: rgba(249,115,22,0.15); color: var(--orange);">接触</span></div>
+    </div>
+
+    <!-- South Korea -->
+    <div class="ct-row">
+      <div class="flag">🇰🇷</div>
+      <div><div class="name">韩国</div><div class="sub">5200万人口 · GDP $1.7T</div></div>
+      <div class="data">$180B</div>
+      <div class="bar-cell">
+        <div class="mini-bar"><div class="mini-fill" style="width: 80%; background: var(--green);"></div></div>
+        <span style="font-size:12px; color:var(--text-dim);">80%</span>
+      </div>
+      <div><span class="reg-badge" style="background: rgba(34,197,94,0.15); color: var(--green);">规范</span></div>
+      <div class="data">$7B/年</div>
+      <div class="data" style="color: var(--red);">高</div>
+      <div><span class="presence" style="background: rgba(234,179,8,0.15); color: var(--yellow);">等材料</span></div>
+    </div>
+
+    <!-- Hong Kong -->
+    <div class="ct-row">
+      <div class="flag">🇭🇰</div>
+      <div><div class="name">香港</div><div class="sub">750万人口 · GDP $380B</div></div>
+      <div class="data">$60B</div>
+      <div class="bar-cell">
+        <div class="mini-bar"><div class="mini-fill" style="width: 72%; background: var(--green);"></div></div>
+        <span style="font-size:12px; color:var(--text-dim);">72%</span>
+      </div>
+      <div><span class="reg-badge" style="background: rgba(34,197,94,0.15); color: var(--green);">拥抱</span></div>
+      <div class="data">$15B/年</div>
+      <div class="data" style="color: var(--red);">高</div>
+      <div><span class="presence" style="background: rgba(59,130,246,0.15); color: var(--blue);">计划</span></div>
+    </div>
+
+    <!-- Nigeria -->
+    <div class="ct-row">
+      <div class="flag">🇳🇬</div>
+      <div><div class="name">尼日利亚</div><div class="sub">2.2亿人口 · GDP $470B</div></div>
+      <div class="data">$15B</div>
+      <div class="bar-cell">
+        <div class="mini-bar"><div class="mini-fill" style="width: 40%; background: var(--yellow);"></div></div>
+        <span style="font-size:12px; color:var(--text-dim);">40%</span>
+      </div>
+      <div><span class="reg-badge" style="background: rgba(234,179,8,0.15); color: var(--yellow);">松动</span></div>
+      <div class="data">$20B/年</div>
+      <div class="data" style="color: var(--green);">低</div>
+      <div><span class="presence" style="background: rgba(234,179,8,0.15); color: var(--yellow);">等API</span></div>
+    </div>
+
+    <!-- Australia -->
+    <div class="ct-row">
+      <div class="flag">🇦🇺</div>
+      <div><div class="name">澳洲</div><div class="sub">2600万人口 · GDP $1.7T</div></div>
+      <div class="data">$85B</div>
+      <div class="bar-cell">
+        <div class="mini-bar"><div class="mini-fill" style="width: 68%; background: var(--green);"></div></div>
+        <span style="font-size:12px; color:var(--text-dim);">68%</span>
+      </div>
+      <div><span class="reg-badge" style="background: rgba(34,197,94,0.15); color: var(--green);">规范</span></div>
+      <div class="data">$5B/年</div>
+      <div class="data" style="color: var(--red);">高</div>
+      <div><span class="presence" style="background: rgba(59,130,246,0.15); color: var(--blue);">计划</span></div>
+    </div>
+
+    <!-- Indonesia -->
+    <div class="ct-row">
+      <div class="flag">🇮🇩</div>
+      <div><div class="name">印尼</div><div class="sub">2.8亿人口 · GDP $1.3T</div></div>
+      <div class="data">$55B</div>
+      <div class="bar-cell">
+        <div class="mini-bar"><div class="mini-fill" style="width: 50%; background: var(--green);"></div></div>
+        <span style="font-size:12px; color:var(--text-dim);">50%</span>
+      </div>
+      <div><span class="reg-badge" style="background: rgba(234,179,8,0.15); color: var(--yellow);">谨慎</span></div>
+      <div class="data">$12B/年</div>
+      <div class="data" style="color: var(--yellow);">中等</div>
+      <div><span class="presence" style="background: rgba(136,136,160,0.15); color: var(--text-dim);">—</span></div>
+    </div>
+
+    <!-- India -->
+    <div class="ct-row">
+      <div class="flag">🇮🇳</div>
+      <div><div class="name">印度</div><div class="sub">14亿人口 · GDP $3.7T</div></div>
+      <div class="data">$350B</div>
+      <div class="bar-cell">
+        <div class="mini-bar"><div class="mini-fill" style="width: 75%; background: var(--green);"></div></div>
+        <span style="font-size:12px; color:var(--text-dim);">75%</span>
+      </div>
+      <div><span class="reg-badge" style="background: rgba(239,68,68,0.15); color: var(--red);">限制</span></div>
+      <div class="data">$100B/年</div>
+      <div class="data" style="color: var(--red);">极高</div>
+      <div><span class="presence" style="background: rgba(136,136,160,0.15); color: var(--text-dim);">—</span></div>
+    </div>
+
+    <!-- Malaysia -->
+    <div class="ct-row">
+      <div class="flag">🇲🇾</div>
+      <div><div class="name">马来西亚</div><div class="sub">3300万人口 · GDP $400B</div></div>
+      <div class="data">$20B</div>
+      <div class="bar-cell">
+        <div class="mini-bar"><div class="mini-fill" style="width: 55%; background: var(--green);"></div></div>
+        <span style="font-size:12px; color:var(--text-dim);">55%</span>
+      </div>
+      <div><span class="reg-badge" style="background: rgba(34,197,94,0.15); color: var(--green);">友好</span></div>
+      <div class="data">$5B/年</div>
+      <div class="data" style="color: var(--yellow);">中等</div>
+      <div><span class="presence" style="background: rgba(136,136,160,0.15); color: var(--text-dim);">—</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Competitor Landscape -->
+<div class="section">
+  <div class="section-title">竞争格局</div>
+  <div class="comp-grid">
+    <div class="comp-card">
+      <div class="comp-name">Stripe</div>
+      <div class="comp-type">全球支付基础设施 · 美国</div>
+      <div class="comp-stats">
+        <div>💰 估值 $65B · <span class="label">2024</span></div>
+        <div>🌍 46+ 国家 · <span class="label">线上为主</span></div>
+        <div>⚠️ <span class="label">KYC 慢、东南亚弱、不做稳定币</span></div>
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">Adyen</div>
+      <div class="comp-type">全渠道支付 · 荷兰</div>
+      <div class="comp-stats">
+        <div>💰 市值 $45B · <span class="label">上市</span></div>
+        <div>🌍 全球 · <span class="label">企业级</span></div>
+        <div>⚠️ <span class="label">面向大企业、不做 crypto</span></div>
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">Wise</div>
+      <div class="comp-type">跨境汇款 · 英国</div>
+      <div class="comp-stats">
+        <div>💰 市值 $8B · <span class="label">上市</span></div>
+        <div>🌍 80+ 国家 · <span class="label">C端为主</span></div>
+        <div>⚠️ <span class="label">法币跨境、不做稳定币结算</span></div>
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">Circle / USDC</div>
+      <div class="comp-type">稳定币发行商 · 美国</div>
+      <div class="comp-stats">
+        <div>💰 USDC $35B · <span class="label">IPO 准备中</span></div>
+        <div>🌍 全球 · <span class="label">协议层</span></div>
+        <div>⚠️ <span class="label">发币不做线下收单</span></div>
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-name">MoonPay</div>
+      <div class="comp-type">Crypto On-ramp · 美国</div>
+      <div class="comp-stats">
+        <div>💰 估值 $3.4B · <span class="label">2022</span></div>
+        <div>🌍 160+ 国家 · <span class="label">入金</span></div>
+        <div>⚠️ <span class="label">只做入金、不做线下支付</span></div>
+      </div>
+    </div>
+    <div class="comp-card" style="border: 1px solid var(--accent);">
+      <div class="comp-name" style="color: var(--accent);">Onta Network</div>
+      <div class="comp-type" style="color: var(--accent);">稳定币 × 线下支付 × 合规协议</div>
+      <div class="comp-stats">
+        <div>🎯 <span style="color: var(--accent);">唯一同时具备：牌照 + 协议 + 700万POS</span></div>
+        <div>🌍 8国布局 · <span class="label">菲律宾主攻</span></div>
+        <div>✅ <span class="label">制度 + 技术 + 物理触点 三合一</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Signals / Industry News -->
+<div class="section">
+  <div class="section-title">📡 行业信号 · Signals</div>
+  <div class="signal-list">
+    <div class="signal-item">
+      <div class="s-icon">🏛️</div>
+      <div class="s-content">
+        <div class="s-title">MiCA 法规正式生效 — 欧盟稳定币监管框架落地</div>
+        <div class="s-desc">欧盟成为全球首个对稳定币和加密资产有完整监管框架的地区。对 Onta 的欧洲扩张有重大影响。</div>
+        <span class="s-tag" style="background: rgba(99,102,241,0.15); color: var(--accent);">监管</span>
+      </div>
+    </div>
+    <div class="signal-item">
+      <div class="s-icon">💰</div>
+      <div class="s-content">
+        <div class="s-title">稳定币日交易量突破 $500B — 超越 Visa</div>
+        <div class="s-desc">稳定币链上结算量持续增长，已在结算速度和成本上对传统清算网络形成替代压力。</div>
+        <span class="s-tag" style="background: rgba(34,197,94,0.15); color: var(--green);">趋势</span>
+      </div>
+    </div>
+    <div class="signal-item">
+      <div class="s-icon">🇵🇭</div>
+      <div class="s-content">
+        <div class="s-title">菲律宾 BSP 推动数字支付转型 — 目标 50% 电子化</div>
+        <div class="s-desc">菲律宾央行设定2025年零售支付50%数字化目标，GCash/PayMaya 快速增长，线下收单需求爆发。</div>
+        <span class="s-tag" style="background: rgba(249,115,22,0.15); color: var(--orange);">机会</span>
+      </div>
+    </div>
+    <div class="signal-item">
+      <div class="s-icon">🤖</div>
+      <div class="s-content">
+        <div class="s-title">AI Agent 支付需求爆发 — Stripe 推出 Agent Toolkit</div>
+        <div class="s-desc">Stripe 率先推出 AI Agent 支付 SDK。市场验证了 Vibecash 的方向——AI 需要自己的支付能力。</div>
+        <span class="s-tag" style="background: rgba(6,182,212,0.15); color: var(--cyan);">竞品</span>
+      </div>
+    </div>
+    <div class="signal-item">
+      <div class="s-icon">🇳🇬</div>
+      <div class="s-content">
+        <div class="s-title">尼日利亚解除 crypto 禁令 — 重新开放交易所</div>
+        <div class="s-desc">尼日利亚 SEC 开始发放牌照，Binance 等重返市场。非洲最大经济体的 crypto 支付窗口打开。</div>
+        <span class="s-tag" style="background: rgba(249,115,22,0.15); color: var(--orange);">机会</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Market Opportunity Score -->
+<div class="section">
+  <div class="section-title">🎯 市场机会评分（Onta 视角）</div>
+  <div class="country-table">
+    <div class="ct-header" style="grid-template-columns: 44px 1fr 0.6fr 0.6fr 0.6fr 0.6fr 0.6fr;">
+      <div></div>
+      <div>市场</div>
+      <div>市场规模</div>
+      <div>监管友好</div>
+      <div>竞争缺口</div>
+      <div>汇款需求</div>
+      <div>综合评分</div>
+    </div>
+    <div class="ct-row" style="grid-template-columns: 44px 1fr 0.6fr 0.6fr 0.6fr 0.6fr 0.6fr;">
+      <div class="flag">🇵🇭</div>
+      <div class="name">菲律宾</div>
+      <div>⭐⭐⭐</div>
+      <div>⭐⭐⭐⭐</div>
+      <div>⭐⭐⭐⭐</div>
+      <div>⭐⭐⭐⭐⭐</div>
+      <div style="color: var(--green); font-weight: 700;">95</div>
+    </div>
+    <div class="ct-row" style="grid-template-columns: 44px 1fr 0.6fr 0.6fr 0.6fr 0.6fr 0.6fr;">
+      <div class="flag">🇳🇬</div>
+      <div class="name">尼日利亚</div>
+      <div>⭐⭐</div>
+      <div>⭐⭐⭐</div>
+      <div>⭐⭐⭐⭐⭐</div>
+      <div>⭐⭐⭐⭐</div>
+      <div style="color: var(--green); font-weight: 700;">88</div>
+    </div>
+    <div class="ct-row" style="grid-template-columns: 44px 1fr 0.6fr 0.6fr 0.6fr 0.6fr 0.6fr;">
+      <div class="flag">🇻🇳</div>
+      <div class="name">越南</div>
+      <div>⭐⭐⭐</div>
+      <div>⭐⭐⭐</div>
+      <div>⭐⭐⭐⭐</div>
+      <div>⭐⭐⭐⭐</div>
+      <div style="color: var(--green); font-weight: 700;">85</div>
+    </div>
+    <div class="ct-row" style="grid-template-columns: 44px 1fr 0.6fr 0.6fr 0.6fr 0.6fr 0.6fr;">
+      <div class="flag">🇯🇵</div>
+      <div class="name">日本</div>
+      <div>⭐⭐⭐⭐⭐</div>
+      <div>⭐⭐⭐⭐</div>
+      <div>⭐⭐</div>
+      <div>⭐⭐</div>
+      <div style="color: var(--yellow); font-weight: 700;">78</div>
+    </div>
+    <div class="ct-row" style="grid-template-columns: 44px 1fr 0.6fr 0.6fr 0.6fr 0.6fr 0.6fr;">
+      <div class="flag">🇹🇭</div>
+      <div class="name">泰国</div>
+      <div>⭐⭐⭐</div>
+      <div>⭐⭐⭐</div>
+      <div>⭐⭐⭐</div>
+      <div>⭐⭐⭐</div>
+      <div style="color: var(--yellow); font-weight: 700;">75</div>
+    </div>
+    <div class="ct-row" style="grid-template-columns: 44px 1fr 0.6fr 0.6fr 0.6fr 0.6fr 0.6fr;">
+      <div class="flag">🇰🇷</div>
+      <div class="name">韩国</div>
+      <div>⭐⭐⭐⭐</div>
+      <div>⭐⭐⭐⭐</div>
+      <div>⭐⭐</div>
+      <div>⭐⭐</div>
+      <div style="color: var(--yellow); font-weight: 700;">72</div>
+    </div>
+    <div class="ct-row" style="grid-template-columns: 44px 1fr 0.6fr 0.6fr 0.6fr 0.6fr 0.6fr;">
+      <div class="flag">🇮🇩</div>
+      <div class="name">印尼</div>
+      <div>⭐⭐⭐⭐</div>
+      <div>⭐⭐</div>
+      <div>⭐⭐⭐</div>
+      <div>⭐⭐⭐</div>
+      <div style="color: var(--yellow); font-weight: 700;">70</div>
+    </div>
+  </div>
+</div>
+
+<div class="updated">
+  Last updated: 2026-03-13 02:34 SGT &nbsp;·&nbsp; FounderOS World Map v2.0<br>
+  <span style="color: var(--yellow);">⚠️ 数据为行业估算值，待接入实时数据源</span>
+</div>
+
+</div>
+
+<script>
+const HASH = '6e8615893da9474539d5d0d4e0f3ace7b1dd946030878bd223c6774a3297b37d';
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+async function tryLogin() {
+  const pwd = document.getElementById('pwdInput').value;
+  const hash = await sha256(pwd);
+  if (hash === HASH) { sessionStorage.setItem('fos_auth', '1'); unlock(); }
+  else { document.getElementById('loginError').textContent = 'Wrong password'; document.getElementById('pwdInput').value = ''; }
+}
+function unlock() {
+  document.getElementById('loginOverlay').classList.add('hidden');
+  document.getElementById('dashboardContent').classList.remove('locked');
+}
+if (sessionStorage.getItem('fos_auth') === '1') unlock();
+document.getElementById('pwdInput').addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin(); });
+</script>
+</body>
+</html>
