@@ -1,0 +1,23 @@
+# OpenClaw internal
+.openclaw/
+media/
+
+# Embedded repos
+forty-years-old/
+
+# Temp files from Telegram
+file_*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# SQLite
+*.db-journal
+*.db-wal
+*.db-shm
+
+# OS
+.DS_Store
+forty-years-old/

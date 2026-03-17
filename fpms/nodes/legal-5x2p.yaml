@@ -1,0 +1,15 @@
+background_summary: '审核Anext信贷协议中的连带担保条款，评估对Uniweb的法律风险。
+
+  重点关注无限责任条款和资产冻结风险。'
+id: legal-5x2p
+metadata:
+  assignee: Sarah-Chen
+  created: '2026-03-13T16:45:00Z'
+  deadline: '2026-03-18T17:00:00Z'
+  owner: Legal-Team
+  priority: high
+relations:
+  depends_on: []
+  parent_id: null
+status: done
+title: 审核Anext连带担保条款法律风险

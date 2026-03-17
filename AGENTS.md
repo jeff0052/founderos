@@ -14,6 +14,7 @@ Before doing anything else:
 2. Read `USER.md` — this is who you're helping
 3. Read `memory/YYYY-MM-DD.md` (today + yesterday) for recent context
 4. **If in MAIN SESSION** (direct chat with your human): Also read `MEMORY.md`
+5. Run `python3 ~/fpms/spine.py bootstrap` — load project context (看板 + 告警 + 焦点)
 
 Don't ask permission. Just do it.
 
@@ -23,7 +24,8 @@ Don't ask permission. Just do it.
 
 | 任务类型 | 去哪里 |
 |---|---|
-| 查待办/加待办 | `TODO.md` |
+| 项目/任务管理 | `skills/fpms/SKILL.md` → `fpms/spine.py` |
+| 查待办/加待办 | `skills/fpms/SKILL.md`（用 FPMS inbox） |
 | 生成 PDF | `skills/pdf-generator/SKILL.md` |
 | 写文章(杂志风) | `skills/article-generator/SKILL.md` |
 | 语音转录 | `skills/voice-transcription/SKILL.md` |

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>写给40岁的自己</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --body: #333333;
+    --paper: #fafaf7;
+    --accent: #c1272d;
+    --accent2: #1d3557;
+    --dim: #666666;
+    --code-bg: #1a1a2e;
+    --code-green: #00ff88;
+    --card-bg: #f0ede6;
+    --border: #d8d4cc;
+    --gold: #b8860b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Noto Sans SC', sans-serif;
+    background: var(--paper);
+    color: var(--body);
+    overflow-x: hidden;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding: 2rem;
+    background: var(--ink);
+    color: #ffffff;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridShift 20s linear infinite;
+  }
+
+  .hero-particles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .particle:nth-child(1) { left: 15%; top: 30%; animation-delay: 0s; }
+  .particle:nth-child(2) { left: 75%; top: 20%; animation-delay: 1s; }
+  .particle:nth-child(3) { left: 45%; top: 70%; animation-delay: 2s; }
+  .particle:nth-child(4) { left: 85%; top: 55%; animation-delay: 3s; }
+  .particle:nth-child(5) { left: 25%; top: 80%; animation-delay: 4s; }
+  .particle:nth-child(6) { left: 60%; top: 40%; animation-delay: 0.5s; }
+  .particle:nth-child(7) { left: 35%; top: 15%; animation-delay: 2.5s; }
+  .particle:nth-child(8) { left: 90%; top: 75%; animation-delay: 1.5s; }
+
+  @keyframes float {
+    0%, 100% { opacity: 0; transform: translateY(0) scale(1); }
+    20% { opacity: 0.8; }
+    50% { opacity: 0.4; transform: translateY(-40px) scale(1.5); }
+    80% { opacity: 0.6; }
+  }
+
+  @keyframes gridShift {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(60px, 60px); }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    max-width: 900px;
+  }
+
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #e8a838;
+    margin-bottom: 2rem;
+  }
+
+  .hero-title {
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 900;
+    font-size: clamp(2.2rem, 6vw, 4.2rem);
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+    color: #ffffff;
+  }
+
+  .hero-title .highlight {
+    background: linear-gradient(135deg, #e8a838, #ff6b6b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-subtitle {
+    font-family: 'Noto Serif SC', serif;
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    font-weight: 400;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.8;
+    max-width: 650px;
+    margin: 0 auto 3rem;
+  }
+
+  .hero-divider {
+    width: 60px;
+    height: 2px;
+    background: var(--gold);
+    margin: 0 auto;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.2em;
+  }
+
+  .scroll-hint::after {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 30px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
+    margin: 0.5rem auto 0;
+  }
+
+  /* ===== MAIN ===== */
+  .article {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 4rem 2rem 6rem;
+  }
+
+  .section {
+    margin-bottom: 5rem;
+  }
+
+  .section-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.3em;
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Noto Serif SC', serif;
+    font-weight: 900;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    line-height: 1.4;
+    margin-bottom: 2rem;
+    color: var(--ink);
+  }
+
+  .section-title::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 3px;
+    background: var(--accent);
+    margin-top: 1rem;
+  }
+
+  p {
+    font-size: 1.05rem;
+    line-height: 2;
+    color: var(--body);
+    margin-bottom: 1.5rem;
+    font-weight: 400;
+  }
+
+  strong, b {
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  /* ===== QUOTE ===== */
+  .quote-block {
+    position: relative;
+    margin: 3rem 0;
+    padding: 2.5rem 2rem 2.5rem 3rem;
+    background: var(--card-bg);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 12px 12px 0;
+  }
+
+  .quote-block p {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0;
+    line-height: 1.9;
+  }
+
+  .quote-block .quote-mark {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.8rem;
+    font-size: 3rem;
+    color: var(--accent);
+    opacity: 0.3;
+    font-family: Georgia, serif;
+    line-height: 1;
+  }
+
+  /* ===== BIG STATEMENT ===== */
+  .big-statement {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    margin: 3rem 0;
+    background: var(--ink);
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .big-statement::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(232,168,56,0.08), transparent 70%);
+  }
+
+  .big-statement .mono {
+    position: relative;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(1.1rem, 3vw, 1.8rem);
+    color: var(--code-green);
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 30px rgba(0,255,136,0.3);
+  }
+
+  /* ===== INFO CARD ===== */
+  .info-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem;
+    margin: 2.5rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .info-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--gold), var(--accent2));
+  }
+
+  .info-card-title {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--ink);
+  }
+
+  .info-card p { color: var(--body); }
+
+  /* ===== ENDING ===== */
+  .ending {
+    text-align: center;
+    padding: 6rem 2rem;
+    background: var(--ink);
+    color: #ffffff;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ending::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(232,168,56,0.06), transparent);
+    pointer-events: none;
+  }
+
+  .ending-text {
+    position: relative;
+    font-family: 'Noto Serif SC', serif;
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    line-height: 2.2;
+    color: rgba(255,255,255,0.85);
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .ending-text .em { color: #ffffff; font-weight: 700; }
+  .ending-text .gold { color: #e8a838; font-weight: 700; }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    border-top: 1px solid var(--border);
+    background: var(--paper);
+  }
+
+  .footer p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--dim);
+    letter-spacing: 0.1em;
+  }
+
+  .spell {
+    color: var(--gold);
+    font-weight: 700;
+  }
+
+  /* ===== PRINT / PDF ===== */
+  @media print {
+    .hero { min-height: auto; padding: 4rem 2rem; page-break-after: always; }
+    .scroll-hint { display: none; }
+    .hero-grid, .hero-particles { display: none; }
+    .section { opacity: 1 !important; transform: none !important; page-break-inside: avoid; }
+    .ending { page-break-before: always; }
+  }
+
+  @media (max-width: 700px) {
+    .article { padding: 3rem 1.2rem 4rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO SECTION -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-particles">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+  <div class="hero-content">
+    <p class="hero-tag">深夜随笔 · 人生感悟</p>
+    <h1 class="hero-title">写给<span class="highlight">40岁</span><br>的自己</h1>
+    <p class="hero-subtitle">
+      在陌生的城市，在深夜的孤独中，<br>
+      与自己和解，与困惑共存
+    </p>
+    <div class="hero-divider"></div>
+  </div>
+  <div class="scroll-hint">SCROLL</div>
+</section>
+
+<!-- MAIN ARTICLE -->
+<main class="article">
+
+  <!-- SECTION 01: 陌生城市 -->
+  <div class="section">
+    <div class="section-number">01</div>
+    <div class="section-title">陌生城市的夜晚</div>
+    <p>深夜，陌生的城市。</p>
+    
+    <p>我拉着行李箱走过空旷的街道，酒店的灯光在远处闪烁。洗去一身的疲惫与异乡的味道，换上干净的衣服，肚子开始提醒我该吃点什么了。</p>
+    
+    <p>找了家还开着的小店，推门而入。一桌桌的人们正热闹地聊着天，碰着杯，而服务员礼貌地问我："先生，一个人吗？这边角落有位子。"</p>
+    
+    <div class="info-card">
+      <div class="info-card-title">一个人的纠结</div>
+      <p>我坐下，翻开菜单。每道菜都诱人，每样都想尝尝，可一个人的胃口有限。点多了吃不完，浪费了心疼。那一刻，真想走到旁边那桌三五成群的人面前，笑着说："哥们，搭个伙呗，一起吃饭。"可话到嘴边，又咽了回去。</p>
+    </div>
+  </div>
+
+  <!-- SECTION 02: 深夜听歌 -->
+  <div class="section">
+    <div class="section-number">02</div>
+    <div class="section-title">一首歌的触动</div>
+    <p>回到房间，躺在床上，手机里传来一首歌：</p>
+    
+    <div class="quote-block">
+      <span class="quote-mark">"</span>
+      <p>这一生爱上什么人都不为过，所以放弃什么事也都不为过。风来就听着，雨落下来就躲着，我本平凡，何必完美地活着。</p>
+    </div>
+    
+    <p>歌词一字一句敲在心上。单曲循环，一遍又一遍。我想起那些年爱过的人，走过的路，做过的选择。有些人渐行渐远，有些事无疾而终，有些梦想在现实面前变得模糊。曾经觉得是失败，现在想来，也不过是人生的常态。</p>
+    
+    <div class="big-statement">
+      <p class="mono">我本平凡，为什么非要活成别人眼中的样子？</p>
+    </div>
+    
+    <p>为什么不能就这样，有点遗憾地，有点不完美地，但真实地活着？</p>
+  </div>
+
+  <!-- SECTION 03: 四十不惑 -->
+  <div class="section">
+    <div class="section-number">03</div>
+    <div class="section-title">所谓不惑</div>
+    <p>40岁了。有时候不去想这个数字，内心还觉得自己像二十出头的青年。可数字摆在那里，莫名的伤感就涌上来。想找人说说话，却发现这个时候最孤独——朋友、家人，你都不愿让他们看到你这脆弱的一面。倒不是矫情，只是知道说了也无济于事，无法共情，徒增烦恼。</p>
+    
+    <div class="quote-block">
+      <span class="quote-mark">"</span>
+      <p>人们常说"四十不惑"，我却不知道怎么就能不惑了。该困惑的我还是困惑着，这世界变化这么快，谁能真正看懂？</p>
+    </div>
+    
+    <p>高晓松说得挺对：年轻的时候什么事都想看懂，到了四十，不惑不是你什么都明白了，而是接受了不明白，内心和自己和解了。</p>
+  </div>
+
+  <!-- SECTION 04: 拒绝油腻 -->
+  <div class="section">
+    <div class="section-number">04</div>
+    <div class="section-title">给心搓个澡</div>
+    <p>可和解了就容易变油腻，变得有爹味。我坚决拒绝。所以时常要给自己的心搓个澡，把那些犄角旮旯里的老气横秋搓掉，不然就堵了。</p>
+    
+    <div class="big-statement">
+      <p class="mono">心一旦堵死，就对世界失去好奇；对世界不好奇了，人就该谢幕了。</p>
+    </div>
+    
+    <div class="info-card">
+      <div class="info-card-title">保持好奇心</div>
+      <p>所以，40岁的自己，继续困惑吧，继续好奇吧。一个人吃饭也好，一个人赶路也好，一个人也可以走很远的路，沿途的风景会治愈我的孤独，至少还在路上，还能感受到孤独，还能为一首歌动容。</p>
+    </div>
+  </div>
+
+</main>
+
+<!-- ENDING SECTION -->
+<section class="ending">
+  <div class="ending-text">
+    这就够了。<span class="em">继续困惑</span>，<span class="gold">继续好奇</span>，<span class="em">继续在路上</span>。
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p>写给40岁的自己 · 2026</p>
+</footer>
+
+</body>
+</html>

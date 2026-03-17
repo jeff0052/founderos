@@ -1,0 +1,18 @@
+id: netst-9k3l
+title: "NetStar API文档转发及技术对接"
+status: waiting
+
+relations:
+  parent_id: macro-0a1b
+  depends_on: []
+
+metadata:
+  owner: Jeff
+  assignee: Tech-Team
+  priority: medium
+  deadline: "2026-04-08T09:00:00Z"
+  created: "2026-03-14T11:30:00Z"
+  
+background_summary: |
+  NetStar吉田已提供API文档和MOU，需转发技术团队评估集成难度。
+  4/8赴日前需确认技术可行性和时间表。

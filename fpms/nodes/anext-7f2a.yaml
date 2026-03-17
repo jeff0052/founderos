@@ -1,0 +1,17 @@
+id: anext-7f2a
+title: "Anext 信贷协议最终审核"
+status: blocked
+
+relations:
+  parent_id: macro-0a1b
+  depends_on: [legal-5x2p]
+
+metadata:
+  owner: Jeff
+  priority: high
+  deadline: "2026-03-20T18:00:00Z"
+  created: "2026-03-10T09:00:00Z"
+  
+background_summary: |
+  利率已从8.2%降至7.8%，Charles让步但增加连带担保条款。
+  当前等待法务team审核担保条款的法律风险评估。

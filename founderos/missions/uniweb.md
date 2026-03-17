@@ -1,71 +1,77 @@
 # Uniweb Missions
 
-**Objective:** 成为菲律宾前三收单平台，建立稳定现金流引擎
+**Objective:** 合规网络 + 法币支付能力 — 对接金融机构，搭建牌照体系，实现法币世界的完整支付能力
 
 ---
 
 ## Active Missions
 
-### M-UW-001: Benji 合作落地
-- **Owner:** Jeff
+### M-UW-001: 新加坡 DPT 牌照
+- **Owner:** TBD
 - **Deadline:** TBD
 - **Status:** active
 - **Notes:**
-  - ✅ Benji 确认想要合作
-  - 📊 渠道规模: 500个 KA 商户 + 3000个 bus
-  - 📋 流程: 我方发资料 → Benji推给商户 → 商户决策
-- **Next:** 准备并发送公司资料包给 Benji
+  - 📋 进度待更新
+- **Next:** 更新当前申请状态
 
-### M-UW-002: Paymongo 协议签署
-- **Owner:** Jeff
-- **Deadline:** TBD
-- **Status:** waiting
-- **Waiting For:** Camile (Paymongo) 审核反馈
-- **Waiting Since:** 2026-03-12
-- **Notes:**
-  - ✅ 已面谈
-  - ✅ Partnership agreement 已发送给 Camile
-- **Next:** 等待 Paymongo 反馈，准备后续谈判
-
-### M-UW-003: Mosaic Pilot 项目
-- **Owner:** Jeff + Jilian (Mosaic)
-- **Deadline:** TBD
-- **Status:** waiting
-- **Waiting For:** Jilian 发送5个候选商户清单
-- **Waiting Since:** 2026-03-12
-- **Notes:**
-  - 🏪 Mosaic = POS provider，后端用 Paymongo
-  - 🎯 落地5个商户做线下推广活动
-  - 💼 商户帮推广钱包 + 打印 marketing material + decal
-  - 📊 测算所需 incentive 和执行成本
-- **Next:** 收到商户清单后确认 pilot 方案
-
-### M-UW-004: 商米 PayMaya 连接
-- **Owner:** Jeff
+### M-UW-002: 澳洲 AFSL 牌照
+- **Owner:** TBD
 - **Deadline:** TBD
 - **Status:** pending
 - **Notes:**
-  - 🍽️ Enuis (商米菲律宾国家经理) 承诺介绍 PayMaya
-  - 💳 PayMaya = 菲律宾第二大钱包
-  - 📊 Enuis 在菲律宾有深层人脉
-- **Next:** 等待 Enuis 正式介绍
+  - 📋 进度待更新
+- **Next:** 更新当前申请状态
 
-### M-UW-005: Ted Web Test + Marketing
-- **Owner:** Ted
+### M-UW-003: 香港 MSO 牌照
+- **Owner:** TBD
+- **Deadline:** TBD
+- **Status:** pending
+- **Notes:**
+  - 📋 进度待更新
+- **Next:** 更新当前申请状态
+
+### M-UW-004: Charles (Anext) 信贷协议审核
+- **Owner:** Jeff
 - **Deadline:** TBD
 - **Status:** active
 - **Notes:**
-  - 💻 Web test 对接进行中
-  - 📣 Marketing 计划待定
-- **Next:** 与 Ted 确认进度
+  - 📋 审核信贷协议
+- **Next:** 完成审核
 
-### M-UW-006: Chris 薪水方案
+### M-UW-005: Chris 薪水方案
 - **Owner:** Jeff
 - **Deadline:** 2026-03-12
 - **Status:** active
 - **Notes:**
   - 📅 3月12日已与 Chris 沟通
 - **Next:** 确认最终方案
+
+### M-UW-006: Chris 合规官会面
+- **Owner:** Jeff
+- **Deadline:** 2026-03-14
+- **Status:** active
+- **Notes:**
+  - 📅 3/14 见 Chris
+- **Next:** 准备会面议题
+
+### M-UW-007: 机构账户开设
+- **Owner:** 财务团队
+- **Deadline:** TBD
+- **Status:** unknown
+- **Notes:**
+  - 🏦 需要开一批机构账户
+  - ❓ 进度未知，在财务那里
+- **Next:** 跟财务确认进度
+
+### M-UW-008: 发卡业务开发
+- **Owner:** 技术团队
+- **Deadline:** TBD
+- **Status:** blocked
+- **Blocked By:** 团队没有开始开发
+- **Notes:**
+  - ✅ API 已就绪
+  - ⚠️ 开发未启动
+- **Next:** 排入开发计划
 
 ---
 

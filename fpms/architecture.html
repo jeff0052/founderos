@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FPMS 系统架构图</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { 
+    background: #0a0a0f; 
+    color: #e0e0e0; 
+    font-family: -apple-system, 'SF Pro Display', sans-serif;
+    padding: 24px;
+    min-height: 100vh;
+  }
+  
+  h1 { 
+    text-align: center; 
+    font-size: 22px; 
+    color: #fff;
+    margin-bottom: 6px;
+    letter-spacing: 2px;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 28px;
+  }
+  
+  .architecture {
+    max-width: 780px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  /* Layer styles */
+  .layer {
+    border-radius: 12px;
+    padding: 16px 20px;
+    position: relative;
+  }
+  
+  .layer-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .layer-label .tag {
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+  }
+  
+  /* Layer 3 - Brain */
+  .brain {
+    background: linear-gradient(135deg, #1a1025 0%, #0f0a1a 100%);
+    border: 1px solid #6c3fa0;
+  }
+  .brain .layer-label { color: #b07ee8; }
+  .brain .tag { background: #6c3fa022; color: #b07ee8; border: 1px solid #6c3fa044; }
+  
+  /* Layer 2 - Spine */
+  .spine {
+    background: linear-gradient(135deg, #0a1a2a 0%, #0a0f1f 100%);
+    border: 1px solid #2a6fc9;
+  }
+  .spine .layer-label { color: #5ba0e8; }
+  .spine .tag { background: #2a6fc922; color: #5ba0e8; border: 1px solid #2a6fc944; }
+  
+  /* Layer 1 - Storage */
+  .storage {
+    background: linear-gradient(135deg, #0a1f15 0%, #0a150f 100%);
+    border: 1px solid #2a8a5a;
+  }
+  .storage .layer-label { color: #5ac88a; }
+  .storage .tag { background: #2a8a5a22; color: #5ac88a; border: 1px solid #2a8a5a44; }
+  
+  /* Module grid */
+  .modules {
+    display: grid;
+    gap: 8px;
+  }
+  .modules.cols-2 { grid-template-columns: 1fr 1fr; }
+  .modules.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .modules.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  
+  .module {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+  
+  .module-name {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .module-desc {
+    font-size: 11px;
+    color: #888;
+    line-height: 1.5;
+  }
+  
+  .module-io {
+    margin-top: 6px;
+    font-size: 10px;
+    color: #666;
+    font-family: 'SF Mono', monospace;
+  }
+  
+  .module-io span {
+    display: inline-block;
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-right: 3px;
+  }
+  .io-in { background: rgba(90,200,138,0.1); color: #5ac88a; }
+  .io-out { background: rgba(176,126,232,0.1); color: #b07ee8; }
+  
+  /* Arrows between layers */
+  .arrow-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    padding: 2px 0;
+    color: #444;
+    font-size: 11px;
+  }
+  .arrow-row .arrow-icon { font-size: 16px; }
+  .arrow-row .arrow-label { 
+    font-size: 10px; 
+    color: #555; 
+    font-family: 'SF Mono', monospace;
+    letter-spacing: 0.5px;
+  }
+  
+  /* Module count badge */
+  .count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  
+  .brain .count-badge { background: #6c3fa033; color: #b07ee8; }
+  .spine .count-badge { background: #2a6fc933; color: #5ba0e8; }
+  .storage .count-badge { background: #2a8a5a33; color: #5ac88a; }
+  
+  /* Full-width module */
+  .module.full { grid-column: 1 / -1; }
+  
+  /* Summary */
+  .summary {
+    margin-top: 16px;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    text-align: center;
+  }
+  .summary-item .num {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .summary-item .label {
+    font-size: 11px;
+    color: #666;
+    margin-top: 2px;
+  }
+  
+  /* Highlight module */
+  .module.highlight {
+    border-color: rgba(255,200,50,0.3);
+    background: rgba(255,200,50,0.04);
+  }
+  .module.highlight .module-name { color: #ffc832; }
+</style>
+</head>
+<body>
+
+<h1>FPMS 系统架构</h1>
+<div class="subtitle">分形项目管理系统 · 大小脑解耦 · 确定性上下文注入</div>
+
+<div class="architecture">
+
+  <!-- Layer 3: Brain -->
+  <div class="layer brain">
+    <div class="layer-label">
+      <span class="count-badge">2</span>
+      LAYER 3 · 大脑层
+      <span class="tag">LLM · 非确定性 · 按需计费</span>
+    </div>
+    <div class="modules cols-2">
+      <div class="module">
+        <div class="module-name">🧠 决策引擎</div>
+        <div class="module-desc">
+          意图理解 → 判断 → 输出Tool指令<br>
+          仅做"下一步做什么"的决策
+        </div>
+        <div class="module-io">
+          <span class="io-in">IN</span> Context Bundle
+          <span class="io-out">OUT</span> Tool Call
+        </div>
+      </div>
+      <div class="module">
+        <div class="module-name">✍️ 叙事生成器</div>
+        <div class="module-desc">
+          将状态变更翻译为人类可读叙事<br>
+          Append到节点的.md文件
+        </div>
+        <div class="module-io">
+          <span class="io-in">IN</span> 状态变更事件
+          <span class="io-out">OUT</span> 叙事文本
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Arrow: Brain → Spine -->
+  <div class="arrow-row">
+    <span class="arrow-label">↑ Context Bundle (Push)</span>
+    <span class="arrow-icon">⇅</span>
+    <span class="arrow-label">↓ Tool Call 指令</span>
+  </div>
+
+  <!-- Layer 2: Spine -->
+  <div class="layer spine">
+    <div class="layer-label">
+      <span class="count-badge">6</span>
+      LAYER 2 · 脊髓层
+      <span class="tag">纯Python · 确定性 · 0 Token</span>
+    </div>
+    <div class="modules cols-3">
+      <div class="module highlight">
+        <div class="module-name">🔷 图引擎</div>
+        <div class="module-desc">
+          内存DAG拓扑<br>
+          强边(parent) + 弱边(depends)
+        </div>
+        <div class="module-io">
+          <span class="io-in">IN</span> YAML节点
+          <span class="io-out">OUT</span> 图结构
+        </div>
+      </div>
+      <div class="module highlight">
+        <div class="module-name">🔷 状态机</div>
+        <div class="module-desc">
+          状态冒泡计算<br>
+          环路检测 · 死锁拦截
+        </div>
+        <div class="module-io">
+          <span class="io-in">IN</span> update_status()
+          <span class="io-out">OUT</span> 级联状态变更
+        </div>
+      </div>
+      <div class="module highlight">
+        <div class="module-name">👁️ 上下文组装器</div>
+        <div class="module-desc">
+          DCP核心 · 眼球模型<br>
+          L2焦点 + L1近景 + L0背景
+        </div>
+        <div class="module-io">
+          <span class="io-in">IN</span> Focus ID
+          <span class="io-out">OUT</span> Context Bundle
+        </div>
+      </div>
+      <div class="module">
+        <div class="module-name">⏰ Deadline扫描器</div>
+        <div class="module-desc">
+          时间感知 · 倒计时<br>
+          自动升级优先级
+        </div>
+        <div class="module-io">
+          <span class="io-in">IN</span> 系统时钟
+          <span class="io-out">OUT</span> 预警信号
+        </div>
+      </div>
+      <div class="module">
+        <div class="module-name">📐 全局投影器</div>
+        <div class="module-desc">
+          动态重绘 global_view.md<br>
+          50行内全局看板
+        </div>
+        <div class="module-io">
+          <span class="io-in">IN</span> 图状态快照
+          <span class="io-out">OUT</span> global_view.md
+        </div>
+      </div>
+      <div class="module">
+        <div class="module-name">🗜️ 叙事压缩器</div>
+        <div class="module-desc">
+          夜间异步 · 本地Ollama<br>
+          旧日志→摘要 · 控制膨胀
+        </div>
+        <div class="module-io">
+          <span class="io-in">IN</span> 超长.md
+          <span class="io-out">OUT</span> background_summary
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Arrow: Spine → Storage -->
+  <div class="arrow-row">
+    <span class="arrow-label">↑ 实时加载 (微秒)</span>
+    <span class="arrow-icon">⇅</span>
+    <span class="arrow-label">↓ 原子写入 (COW)</span>
+  </div>
+
+  <!-- Layer 1: Storage -->
+  <div class="layer storage">
+    <div class="layer-label">
+      <span class="count-badge">4</span>
+      LAYER 1 · 存储层
+      <span class="tag">本地文本 · Git追踪 · 100%数据主权</span>
+    </div>
+    <div class="modules cols-4">
+      <div class="module">
+        <div class="module-name">📄 YAML骨架</div>
+        <div class="module-desc">
+          机器读<br>
+          id · status · relations<br>
+          parent_id · depends_on
+        </div>
+      </div>
+      <div class="module">
+        <div class="module-name">📝 MD血肉</div>
+        <div class="module-desc">
+          AI读<br>
+          叙事时间线<br>
+          Append-Only历史
+        </div>
+      </div>
+      <div class="module">
+        <div class="module-name">📊 全局看板</div>
+        <div class="module-desc">
+          只读<br>
+          global_view.md<br>
+          动态生成 ≤50行
+        </div>
+      </div>
+      <div class="module">
+        <div class="module-name">🧊 归档冷冻</div>
+        <div class="module-desc">
+          archive/<br>
+          入度=0 且 Done<br>
+          7天后自动冷冻
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Summary -->
+<div class="architecture">
+  <div class="summary">
+    <div class="summary-item">
+      <div class="num">12</div>
+      <div class="label">总模块数</div>
+    </div>
+    <div class="summary-item">
+      <div class="num">3</div>
+      <div class="label">架构层级</div>
+    </div>
+    <div class="summary-item">
+      <div class="num">6</div>
+      <div class="label">脊髓核心模块</div>
+    </div>
+    <div class="summary-item">
+      <div class="num">0</div>
+      <div class="label">Token基建税</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

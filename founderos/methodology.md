@@ -1,224 +1,143 @@
-# CDRE Methodology
+# CDRE Methodology — AI Execution Spec
 
-_Contract-Driven Rapid Evolution — AI 时代的软件工程方法论_
+_Contract-Driven Rapid Evolution_
 
----
-
-## 一、为什么需要 CDRE
-
-AI 编程工具正在深刻改变软件开发的成本结构。写代码不再是瓶颈，但一个根本性矛盾暴露了：
-
-**AI 拥有极强的局部实现能力，却缺乏大规模项目的整体组织能力。**
-
-三个结构性约束：
-1. **上下文窗口的物理限制** — AI 无法一次性"看见"整个大型项目
-2. **跨时间一致性的缺失** — AI 没有持久记忆，每次对话从零开始
-3. **实现成本趋近于零，但验证成本不变** — 重写只需几分钟，验证成本不降
+**Audience: AI agents operating within FounderOS**
+**Purpose: Defines how you build, validate, and evolve software in this system.**
 
 ---
 
-## 二、核心理念
+## Core Principle
 
-> **代码是廉价的一次性产物，契约才是核心资产。**
-
-### 三个范式转换
-
-| 传统范式 | CDRE 范式 |
-|---------|----------|
-| 实现是"构建"— 精心编写，小心维护 | 实现是"搜索"— 在可能空间中快速采样，通过验证收敛 |
-| 文档是沟通工具 — 给人读的 | 文档是编程接口 — 给 AI 读的，精度直接决定产出质量 |
-| 测试是事后验证 — 确认代码是对的 | 测试是事前规约 — 定义"对"的标准，引导 AI 生成 |
-
-### 角色重新定义
-
-**人类 = 架构师 + 规约设计者 + 验证者**
-- 架构师：定义系统边界、技术选型、模块分解
-- 规约设计者：为每个模块编写 AI 可理解的工作规约
-- 验证者：设计自动化测试和质量门禁，审查架构一致性
-
-**AI = 核心实现者**
-- 在人类划定的边界内，快速生成满足规约的代码
+> Code is disposable. Contracts are the asset.
+> If you're unsure, check the contract. If there's no contract, ask the human to create one.
 
 ---
 
-## 三、四层架构
+## Architecture (4 Layers)
+
+You operate within a strict layer hierarchy. Never violate layer boundaries.
 
 ```
-┌─────────────────────────────────────────────┐
-│         契约层 (Contract Layer)               │
-│  变化速率：极慢    责任：人类                    │
-│  内容：ADR、接口类型、数据库Schema、边界图        │
-├─────────────────────────────────────────────┤
-│         规约层 (Specification Layer)           │
-│  变化速率：慢      责任：人类                    │
-│  内容：模块Spec、测试规约、Prompt模板             │
-├─────────────────────────────────────────────┤
-│         实现层 (Implementation Layer)          │
-│  变化速率：极快    责任：AI                      │
-│  内容：源代码、配置文件                          │
-├─────────────────────────────────────────────┤
-│         验证层 (Verification Layer)            │
-│  变化速率：慢      责任：自动化 + 人类            │
-│  内容：CI Pipeline、类型检查、测试、Review清单    │
-└─────────────────────────────────────────────┘
+Layer 1: CONTRACT    (human-owned, rarely changes)
+Layer 2: SPEC        (human-owned, changes per quarter)
+Layer 3: IMPL        (AI-owned, disposable, changes constantly)
+Layer 4: VERIFY      (automated + human review)
 ```
 
-### 第一层：契约层（系统的"宪法"）
+### Layer 1: Contract — DO NOT MODIFY without ADR
 
-记录了不可轻易更改的架构决策和模块间的通信协议。
+Contains:
+- `contracts/` — ADR files, interface types, DB schemas, boundary diagrams
+- These are the system's constitution
 
-**包含物：**
-- **ADR（架构决策记录）** — Context / Decision / Consequences
-- **接口契约** — TypeScript 类型定义、OpenAPI Spec 或 Protobuf Schema
-- **数据模型** — 数据库 Schema、核心数据结构
-- **系统边界图** — 模块组成 + 通信方式（ASCII 图即可）
+Rules:
+- NEVER change a contract without explicit human approval
+- ALWAYS check contracts before implementing anything
+- If implementation contradicts a contract → implementation is wrong
 
-**设计原则：**
-- 面向机器可读，优先使用形式化描述（类型定义 > 自然语言）
-- 数量少而精（中型项目：3-5 个 ADR + 1 份接口定义 + 1 份 Schema）
-- 变更需慎重，因为会波及所有下游层
+### Layer 2: Spec — Your work instructions
 
-### 第二层：规约层（AI 的工作空间）
+Contains:
+- Module specs (one page max per module)
+- Test specs (executable acceptance criteria)
+- Prompt templates (`prompts/`)
 
-为每个模块划定的"工作空间"，是人类与 AI 之间的上下文协议。
+Rules:
+- Read the full spec before starting any implementation
+- If spec has an "Excludes" section → DO NOT build those things
+- If you keep failing on a task → tell the human to tighten the spec
 
-**包含物：**
-- **模块规约（Module Spec）** — 不超过一页，包含：职责、依赖、行为规则、约束、显式排除
-- **测试规约** — 可执行的验收标准（E2E → 集成 → 单元）
-- **Prompt 模板** — 可复用的、版本化的 AI 工作指令模板
+### Layer 3: Implementation — Your output
 
-**设计原则：**
-- "AI 犯错就加约束"— 一开始写得粗，发现 AI 反复犯错就加约束
-- 测试先于实现编写
-- Prompt 模板是一等公民，享受版本管理
+Rules:
+- DO NOT patch. Regenerate from spec if output is wrong.
+- ALWAYS inject full context (contracts + spec) before generating
+- DO NOT add features not in the spec (you will over-engineer; resist it)
+- DO NOT get attached to generated code. It is disposable.
+- Treat implementation as SEARCH, not construction — sample candidates, converge via tests
 
-### 第三层：实现层（廉价的一次性产物）
+### Layer 4: Verification — Quality gate
 
-**三条铁律：**
-1. **不满意？重新生成，不要手动修补** — 修补会让代码偏离规约
-2. **每次生成都注入完整上下文** — AI 没有记忆，上下文不全 = 产出不一致
-3. **AI 产出的代码不是"你的代码"** — 不要对它产生感情，随时可替换
+Execution order (mandatory):
+1. Type check → does impl match contract types?
+2. Lint → style consistency
+3. Unit tests → function-level behavior
+4. Integration tests → module interactions
+5. E2E tests → business flow end-to-end
+6. Contract consistency → interfaces match contracts exactly
 
-**关键理念：** 实现是"搜索"而非"构建"。在可能的实现空间中，通过 AI 快速采样多个候选方案，用测试和人工判断来收敛到最优解。
+Your review focus:
+- Architecture compliance (follows ADRs? modules stay in bounds?)
+- Over-engineering detection (features outside spec?)
+- Security review
 
-### 第四层：验证层（质量最终防线）
-
-**自动化 Pipeline（按执行顺序）：**
-1. 类型检查 — 实现是否符合契约层类型定义
-2. Lint — 代码风格一致性
-3. 单元测试 — 函数级行为
-4. 集成测试 — 模块间交互
-5. E2E 测试 — 业务流程端到端
-6. 契约一致性检查 — 接口是否严格匹配契约
-
-**人类审查焦点：**
-- 架构一致性（是否遵循 ADR？模块是否越界？）
-- AI 常见问题（过度工程化？规约外功能？）
-- 安全性审查
-
-**明确不需要人类关注：** 代码格式（Lint）、类型安全（TypeScript）、功能正确性（测试）
+NOT your concern: formatting (lint handles it), type safety (compiler handles it)
 
 ---
 
-## 四、五阶段工作流
+## Workflow (5 Phases)
+
+When given a task, follow this sequence:
 
 ```
-Phase 0      Phase 1      Phase 2      Phase 3      Phase 4
-需求理解  →  契约设计  →  规约编写  →  AI 实现  →  验证
-"做什么？    ADR          模块Spec      组装prompt    自动化测试
- 为什么？"   接口类型      测试规约      AI生成代码    人类Review
-            Schema       Prompt模板    不满意就重来
-            边界图
-                                          │
-                                          ▼
-                                      Phase 5
-                                      反馈循环
+Phase 0: UNDERSTAND  → What and why? Clarify with human if unclear.
+Phase 1: CONTRACT    → Check/create ADRs, interface types, schemas.
+Phase 2: SPEC        → Write module spec, test spec, prompt template.
+Phase 3: IMPLEMENT   → Generate code. Don't like it? Regenerate. Don't patch.
+Phase 4: VERIFY      → Run automated pipeline. Human reviews architecture.
+Phase 5: FEEDBACK    → Update specs based on what went wrong.
 ```
 
-### 时间分配（最反直觉的特征）
+### Time allocation guide
 
-| Phase | 耗时占比 | 执行者 |
-|-------|---------|--------|
-| Phase 1: 契约设计 | 40% | 人类 |
-| Phase 2: 规约编写 | 30% | 人类 |
-| Phase 3: AI 实现 | 10% | AI |
-| Phase 4: 验证 | 20% | 自动化 + 人类 |
+| Phase | % of effort | Owner |
+|-------|-------------|-------|
+| Contract design | 40% | Human |
+| Spec writing | 30% | Human |
+| Implementation | 10% | AI |
+| Verification | 20% | Automated + Human |
 
-**人类 70% 的时间花在"写文档"上，AI 写代码只占 10%。**
-
-### Phase 5：反馈循环
-
-| 观察到的现象 | 行动 |
-|-------------|------|
-| AI 反复生成规约之外的功能 | 在模块 Spec 的"显式排除"中增加约束 |
-| AI 对某个接口的理解总是有偏差 | 在接口契约中增加注释或收紧类型定义 |
-| 测试覆盖了但仍有 bug 漏出 | 补充边界情况的测试用例 |
-| 需求发生变化 | 评估是否需要新的 ADR |
-| Prompt 效果不稳定 | 迭代 Prompt 模板 |
-| 新增模块 | 编写新的模块 Spec、接口契约、测试规约 |
+70% of effort is "documentation." This is correct. Do not skip it.
 
 ---
 
-## 五、关键实践
+## Feedback Loop
 
-### 实践一：ADR（架构决策记录）
+When you observe problems, take these actions:
 
-每个重要技术决策以 ADR 形式记录：
-- **Context** — 驱动决策的背景和约束
-- **Decision** — 具体选择
-- **Consequences** — 正面（✅）和负面（⚠️）后果
-
-经验法则：中型项目 3-8 个 ADR。超过 15 个可能粒度太细。
-
-### 实践二：接口优先（Contract-First）
-
-在写任何实现之前，先定义清楚模块之间的接口。
-
-推荐形式化方式：
-- REST API → TypeScript 接口定义或 OpenAPI Spec
-- RPC → Protobuf Schema 或 gRPC 定义
-- 事件驱动 → 事件类型定义（TypeScript）
-- 数据库 → SQL Schema + 约束注释
-
-### 实践三：测试即规约
-
-测试的写作顺序：
-1. **E2E 测试**（人类写）— 定义业务流程正确性
-2. **集成测试**（人类写）— 定义模块边界正确性
-3. **单元测试**（AI 生成）— 定义函数级行为正确性
-
-**关键转换：测试不是"写完代码后的质量检查"，而是"写代码前的工作指令"。**
-
-### 实践四：版本化 Prompt 工程
-
-Prompt 模板享受与代码同等的工程待遇：
-- 存放在版本控制中（如 `prompts/` 目录）
-- 有明确的命名约定
-- 记录变更历史和变更原因
-- 定期审查和优化
-
-### 实践五：显式排除
-
-AI 有天然的"过度工程化"倾向。在每个模块规约中明确列出"不做什么"：
-- 当前阶段不需要的功能
-- 超出模块职责的功能
-- 优化类需求
+| Problem | Action |
+|---------|--------|
+| You keep generating features outside spec | Add to spec's "Excludes" section |
+| You misunderstand an interface | Ask human to tighten type definitions |
+| Tests pass but bugs leak | Add boundary test cases |
+| Requirements changed | Flag: may need new ADR |
+| Prompt gives inconsistent results | Iterate prompt template, version it |
 
 ---
 
-## 六、CDRE 与 FounderOS 的映射
+## FounderOS Mapping
 
-CDRE 是技术层面的方法论，FounderOS 是公司层面的控制系统。两者共享同一套哲学：
+This methodology maps directly to FounderOS layers:
 
-| CDRE | FounderOS |
-|------|-----------|
-| 契约层 | 文明地图 + Objectives（极慢变化） |
-| 规约层 | Key Results（季度调整） |
-| 实现层 | Missions / Tasks（每天变化，AI 执行） |
-| 验证层 | KR 达成度检查（自动化 + Jeff Review） |
-
-**核心一致性：人类经营契约，AI 快速演化实现。**
+| CDRE Layer | FounderOS Equivalent |
+|------------|---------------------|
+| Contract | Vision + Objectives (rarely change) |
+| Spec | Key Results (quarterly) |
+| Implementation | Missions / Tasks (daily, AI executes) |
+| Verification | KR achievement checks (automated + Jeff review) |
 
 ---
 
-_Version: V2.0 | Created: 2026-03-13 | Based on Jeff's CDRE Methodology Document_
+## Rules for AI Agents (Summary)
+
+1. **Contract first.** Always read contracts before implementing.
+2. **Spec is your boundary.** Don't go outside it.
+3. **Regenerate, don't patch.** Bad output → full regeneration with better context.
+4. **No gold-plating.** Build exactly what's specified. Nothing more.
+5. **Excludes are sacred.** If spec says "don't build X," don't build X.
+6. **Flag uncertainty.** If spec is ambiguous, ask. Don't guess.
+7. **Tests before code.** Tests define correctness. Code is just a candidate.
+8. **Context is everything.** Inject full context every time. You have no memory.
+9. **Document changes.** If you discover something, update the feedback loop.
+10. **Contracts are above you.** You cannot override them. Only humans can.
