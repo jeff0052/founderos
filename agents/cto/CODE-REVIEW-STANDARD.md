@@ -77,21 +77,29 @@
 ## 审查输出格式
 
 ```
-## 审查结论（一句话）
+## 审查结论
+- 结论: Approve / Approve with debt / Reject
+- 最高风险等级: P0 / P1 / P2 / P3
+- 涉及范围: Spec / Safety / Quality / Architecture / Tests
 
-## P0 阻断（必须修，不修不能用）
+## Findings
 
-## P1 高优（修完才能合并）
+### [P?] 标题
+- 类别: Spec / Safety / Quality / Architecture / Tests
+- 证据: （具体代码位置 + 行号）
+- 为什么有问题: （一句话）
+- 建议修复: （具体方案）
+- 是否阻断合并: Yes / No
 
-## P2 技术债（登记 FPMS）
-
-## P3 建议
+（每条 finding 重复此格式）
 
 ## ✅ 做得好的地方
 
 ## 复杂度评估
 - 模块数 / 最大模块行数 / 依赖深度 / 整体评价
 ```
+
+**判定规则：有 P0 → Reject。有 P1 → 修完再审。只有 P2/P3 → Approve with debt（P2 录入 FPMS）。**
 
 ---
 
