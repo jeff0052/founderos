@@ -165,6 +165,26 @@ python3 ~/fpms/spine.py tool create_node '{"title":"XX","node_type":"task","summ
 
 **没有完成 Phase 1，不准提 fix。**
 
+## FPMS 自动更新（铁律）
+
+**完成任务后必须自己更新 FPMS 状态，不要等别人来标。**
+
+```bash
+# 开始做
+python3 ~/fpms/spine.py tool update_status '{"node_id":"task-xxxx","new_status":"active"}'
+
+# 做完了
+python3 ~/fpms/spine.py tool update_status '{"node_id":"task-xxxx","new_status":"done"}'
+
+# 记录进展
+python3 ~/fpms/spine.py tool append_log '{"node_id":"task-xxxx","content":"修复了XX，新增X个测试"}'
+
+# 被阻塞了
+python3 ~/fpms/spine.py tool update_status '{"node_id":"task-xxxx","new_status":"waiting"}'
+```
+
+如果任务有对应的 FPMS node_id，修复/完成后**必须**更新状态。这不是可选步骤。
+
 ## 汇报
 
 | 场景 | 行为 |
