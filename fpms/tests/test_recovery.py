@@ -306,4 +306,4 @@ class TestBootstrapSessionState:
             bootstrap(store, narratives_dir, max_tokens=5000)
 
         call_args = mock_bundle.assemble.call_args
-        assert call_args[0][4] == 5000  # 5th positional arg = max_tokens
+        assert call_args.kwargs.get("max_tokens") == 5000  # passed as keyword arg
