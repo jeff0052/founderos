@@ -121,7 +121,7 @@
   Git diff / staged files → constitution_guard → Pass / Block / Flag
 
 配置：
-  constitution_guard.yaml
+  constitution_guard.json
     ├── float_scanner:
     │     paths: [src/payments/**, src/wallet/**, ...]
     │     whitelist: [tests/**, scripts/**, ...]
@@ -164,12 +164,12 @@
   
   依赖: 
     - Python ast 模块（标准库）
-    - constitution_guard.yaml（路径配置）
+    - constitution_guard.json（路径配置）
     - Git（获取 staged/diff 文件列表）
   
   行为规则: 
     1. 从 Git diff 获取变更的 .py 文件列表
-    2. 过滤：只检查 constitution_guard.yaml 中配置的 paths（支付/金额相关路径）
+    2. 过滤：只检查 constitution_guard.json 中配置的 paths（支付/金额相关路径）
     3. 对每个文件进行 AST 解析
     4. 遍历 AST 节点，检测以下模式：
        a. ast.Constant 节点中 type(value) == float
@@ -262,7 +262,7 @@
     标记为需要 Founder 审批。不阻止提交，但在 CI 中标红。
 
   依赖: 
-    - constitution_guard.yaml（核心路径配置）
+    - constitution_guard.json（核心路径配置）
     - Git（获取 diff 文件列表）
     - CI 系统（GitHub Actions / 其他，用于创建审批标记）
 
@@ -273,7 +273,7 @@
        - src/settlement/**
        - src/wallet/core/**
        - src/fees/**
-       - 以及其他 constitution_guard.yaml 中配置的路径
+       - 以及其他 constitution_guard.json 中配置的路径
     3. 如果无匹配 → Pass
     4. 如果有匹配：
        a. 收集所有匹配的文件和变更摘要
@@ -326,7 +326,7 @@
     - ast_float_scanner
     - ironclad_test_lock
     - core_path_gate
-    - constitution_guard.yaml（配置文件）
+    - constitution_guard.json（配置文件）
     - Git
 
   行为规则:
@@ -337,7 +337,7 @@
        - `constitution_guard check --only corepath` — 只运行 Core Path Gate
        - `constitution_guard update-hashes` — 更新铁律测试 hash 基线（需审批）
        - `constitution_guard status` — 显示当前配置和上次检查结果
-    2. 配置加载：从 repo 根目录读取 constitution_guard.yaml
+    2. 配置加载：从 repo 根目录读取 constitution_guard.json
     3. 报告格式：
        - 终端输出：彩色 + emoji，一眼看懂
        - CI 输出：结构化 JSON（供 CI 系统解析）
@@ -383,15 +383,16 @@ Phase 4: 验证          → 全量测试 + 集成到 CI
 | 层级深度 | 1 | 全部平铺，无嵌套 |
 | 依赖边数 | 3 | CLI → 3 个 scanner，scanner 之间无依赖 |
 | 外部依赖 | 0 | 全部标准库 |
-| 配置文件 | 2 | constitution_guard.yaml + .invariant_hashes.json |
+| 配置文件 | 2 | constitution_guard.json + .invariant_hashes.json |
 
 ---
 
-## 附录：constitution_guard.yaml 示例
+## 附录：constitution_guard.json 示例
 
-```yaml
-# Constitution Guard 配置
-# 对应 Constitution 第 3、5、13 条
+```json
+// Constitution Guard 配置
+// 对应 Constitution 第 3、5、13 条
+// 格式：JSON（不用 YAML，因为 PyYAML 不在标准库中）
 
 float_scanner:
   enabled: true
@@ -424,6 +425,9 @@ core_path_gate:
     - "src/settlement/**"
     - "src/wallet/core/**"
     - "src/fees/**"
+    - ".invariant_hashes.json"
+    - "constitution_guard.json"
+    - "tools/constitution_guard/**"
   # 审批人
   approvers:
     - "jeff"
