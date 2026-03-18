@@ -99,6 +99,15 @@ shift_focus, expand_context
 ### Read-only Tools
 get_node, search_nodes (supports parent_id filter, pagination limit/offset)
 
+## MCP Server (Model Context Protocol)
+**mcp_server.py** — Exposes all 14 FPMS tools via stdio MCP transport
+- Use: `python mcp_server.py` to start stdio MCP server
+- All tools registered with proper parameter schemas matching Pydantic models
+- Auto-generates command_id for each tool call
+- Returns ToolResult as JSON matching spine.py CLI format
+- **Transport**: stdio only (no HTTP/SSE)
+- **Interface**: Compatible with MCP clients for seamless integration
+
 ## Key Behaviors
 - **attach_node** on node with existing parent → atomic replace (detach old + attach new)
 - **unarchive** always resets status_changed_at to NOW() (anti-GC-boomerang)
@@ -134,6 +143,7 @@ Conditions (ALL must be true): terminal status + 7d cooldown + no active depende
 ```
 fpms/
 ├── spine.py              # Main engine
+├── mcp_server.py         # MCP server (stdio transport)
 ├── db/
 │   └── fpms.db           # SQLite persistent DB
 ├── narratives/
