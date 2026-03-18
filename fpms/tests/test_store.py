@@ -56,7 +56,7 @@ class TestCreateNode:
     def test_auto_generates_id_with_type_prefix(self, store):
         node = store.create_node(_make_node(node_type="task"))
         assert node.id.startswith("task-")
-        assert len(node.id.split("-")[1]) == 4  # 4 hex chars
+        assert len(node.id.split("-")[1]) == 6  # 6 hex chars
 
     def test_id_prefix_matches_node_type(self, store):
         for nt in ("goal", "project", "milestone", "task", "unknown"):

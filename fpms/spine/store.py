@@ -31,8 +31,8 @@ def _utcnow_iso() -> str:
 def _generate_id(node_type: str, conn: sqlite3.Connection) -> str:
     prefix = _PREFIX_MAP.get(node_type, "node")
     for _ in range(100):
-        hex4 = secrets.token_hex(2)  # 4 hex chars
-        nid = "{}-{}".format(prefix, hex4)
+        hex6 = secrets.token_hex(3)  # 6 hex chars, 16M combinations
+        nid = "{}-{}".format(prefix, hex6)
         cur = conn.execute("SELECT 1 FROM nodes WHERE id=?", (nid,))
         if cur.fetchone() is None:
             return nid
