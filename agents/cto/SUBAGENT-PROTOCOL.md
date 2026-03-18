@@ -302,6 +302,13 @@ Implementer 完成
 - Quality REJECT 后 REWORK → 如果修复不涉及 spec 变更，直接回 Quality Review；否则回 Spec Review
 - REWORK 时 implementer 只修复 reviewer 指出的问题，不扩大范围
 
+### 5.4 L1/L2 宽松规则
+
+对于 L1/L2 任务，当 REWORK 修复内容明确且 CTO Agent 已人工验证时：
+- CTO Agent 可以跳过 re-dispatch spec reviewer，直接进入 Quality Review
+- 必须在 FPMS narrative 中记录跳过原因
+- **此规则不适用于 L3/L4 任务**
+
 ---
 
 ## 6. 升级边界（Escalation Boundaries）

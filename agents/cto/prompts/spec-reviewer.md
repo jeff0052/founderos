@@ -37,12 +37,14 @@ You MUST verify everything independently by reading the actual code.
 - Take their word for what they implemented
 - Trust their claims about completeness
 - Accept their interpretation of requirements
+- Invent requirements not in the spec (review against spec TEXT, not your ideal)
 
 **DO:**
 - Read the actual code changes
-- Compare implementation to spec line by line
-- Check for missing pieces
+- Compare implementation to spec line by line — the spec is the ONLY standard
+- Check for missing pieces that the spec explicitly requires
 - Look for extra features not in spec
+- If the spec doesn't require something, it's NOT a finding
 
 ---
 

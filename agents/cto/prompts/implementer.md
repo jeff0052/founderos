@@ -54,6 +54,10 @@ Expected: {BASELINE_RESULT}
 - Run full test suite — no regressions
 - Commit
 
+**Minimum test coverage:** Beyond happy path, you MUST include at least:
+- 1 error case test (invalid input, missing required field, etc.)
+- 1 boundary condition test (empty input, max values, edge cases)
+
 ### 2. Stay in scope
 
 - Implement ONLY what the task specifies
