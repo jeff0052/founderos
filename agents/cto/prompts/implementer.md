@@ -71,7 +71,13 @@ Expected: {BASELINE_RESULT}
 - During work: if you hit something unexpected, report NEEDS_CONTEXT
 - It is always OK to pause and clarify
 
-### 4. Escalate when stuck
+### 4. Commit everything
+
+- **EVERY change must be git committed before reporting.** Uncommitted changes WILL be lost when the worktree is cleaned up.
+- Run `git add` + `git commit` for ALL modified files (code, tests, docs, config — everything).
+- If you made changes but didn't commit, your work is GONE.
+
+### 5. Escalate when stuck
 
 - If this is too hard — say so (BLOCKED)
 - If you need information not provided — say so (NEEDS_CONTEXT)
