@@ -21,6 +21,8 @@ from mcp.server.fastmcp import FastMCP
 from spine.schema import init_db
 from spine.store import Store
 from spine.command_executor import CommandExecutor
+from spine.memory import MemoryStore, MemoryValidationError, MemoryStateError
+from spine.models import AddMemoryInput
 
 # ── Paths (same as spine.py) ──
 
@@ -49,6 +51,7 @@ def _get_executor() -> tuple[Store, CommandExecutor]:
 
 # Initialize FPMS
 store, executor = _get_executor()
+memory_store = MemoryStore(store)
 
 # Create FastMCP app
 app = FastMCP("FPMS MCP Server")
@@ -361,6 +364,162 @@ def search_nodes(
         "affected_nodes": result.affected_nodes,
         "warnings": result.warnings
     }
+
+
+# ── Memory Tools ──
+
+def _memory_to_dict(mem) -> dict:
+    from dataclasses import asdict
+    return asdict(mem)
+
+
+@app.tool()
+def add_memory(
+    layer: str,
+    content: str,
+    source: str = "manual",
+    sub_type: Optional[str] = None,
+    tags: Optional[list] = None,
+    node_id: Optional[str] = None,
+    based_on: Optional[list] = None,
+    confidence: float = 0.8,
+    priority: str = "P1",
+) -> Dict[str, Any]:
+    """Add a memory to FPMS memory layer.
+
+    layer: fact | judgment | scratch
+    source: auto | manual | system
+    sub_type: preference | decision | lesson | pattern (judgment only)
+    """
+    try:
+        inp = AddMemoryInput(
+            layer=layer,
+            sub_type=sub_type,
+            content=content,
+            tags=tags or [],
+            node_id=node_id,
+            based_on=based_on or [],
+            confidence=confidence,
+            source=source,
+            priority=priority,
+        )
+        mem = memory_store.add_memory(inp)
+        return {"success": True, "data": _memory_to_dict(mem)}
+    except (MemoryValidationError, MemoryStateError) as e:
+        return {"success": False, "error": str(e)}
+    except Exception as e:
+        return {"success": False, "error": f"Unexpected: {e}"}
+
+
+@app.tool()
+def search_memories(
+    layer: Optional[str] = None,
+    sub_type: Optional[str] = None,
+    tags: Optional[list] = None,
+    node_id: Optional[str] = None,
+    keyword: Optional[str] = None,
+    priority: Optional[str] = None,
+    verification: Optional[str] = None,
+    needs_review: Optional[bool] = None,
+    include_archived: bool = False,
+    limit: int = 20,
+    offset: int = 0,
+) -> Dict[str, Any]:
+    """Search memories with filters. Returns trust-sorted results."""
+    try:
+        results = memory_store.search_memories(
+            layer=layer, sub_type=sub_type, tags=tags,
+            node_id=node_id, keyword=keyword, priority=priority,
+            verification=verification, needs_review=needs_review,
+            include_archived=include_archived,
+            limit=limit, offset=offset,
+        )
+        return {
+            "success": True,
+            "data": [_memory_to_dict(m) for m in results],
+            "count": len(results),
+        }
+    except Exception as e:
+        return {"success": False, "error": f"Unexpected: {e}"}
+
+
+@app.tool()
+def update_memory(
+    memory_id: str,
+    content: Optional[str] = None,
+    tags: Optional[list] = None,
+    node_id: Optional[str] = None,
+    based_on: Optional[list] = None,
+    priority: Optional[str] = None,
+    sub_type: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Update a memory. auto_extracted memories must be confirmed first."""
+    try:
+        fields = {}
+        if content is not None:
+            fields["content"] = content
+        if tags is not None:
+            fields["tags"] = tags
+        if node_id is not None:
+            fields["node_id"] = node_id
+        if based_on is not None:
+            fields["based_on"] = based_on
+        if priority is not None:
+            fields["priority"] = priority
+        if sub_type is not None:
+            fields["sub_type"] = sub_type
+
+        mem = memory_store.update_memory(memory_id, fields)
+        return {"success": True, "data": _memory_to_dict(mem)}
+    except (MemoryValidationError, MemoryStateError) as e:
+        return {"success": False, "error": str(e)}
+    except Exception as e:
+        return {"success": False, "error": f"Unexpected: {e}"}
+
+
+@app.tool()
+def forget_memory(memory_id: str) -> Dict[str, Any]:
+    """Archive a memory (soft delete). Produces audit event."""
+    try:
+        mem = memory_store.forget(memory_id)
+        return {"success": True, "data": _memory_to_dict(mem)}
+    except (MemoryValidationError, MemoryStateError) as e:
+        return {"success": False, "error": str(e)}
+    except Exception as e:
+        return {"success": False, "error": f"Unexpected: {e}"}
+
+
+@app.tool()
+def promote_memory(
+    memory_id: str,
+    target_layer: str,
+    sub_type: Optional[str] = None,
+    confidence: Optional[float] = None,
+    priority: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Promote a scratch memory to fact or judgment. Re-validates against target layer rules."""
+    try:
+        mem = memory_store.promote_memory(
+            memory_id, target_layer,
+            sub_type=sub_type, confidence=confidence, priority=priority,
+        )
+        return {"success": True, "data": _memory_to_dict(mem)}
+    except (MemoryValidationError, MemoryStateError) as e:
+        return {"success": False, "error": str(e)}
+    except Exception as e:
+        return {"success": False, "error": f"Unexpected: {e}"}
+
+
+@app.tool()
+def confirm_memory(memory_id: str) -> Dict[str, Any]:
+    """Upgrade auto_extracted memory to user_confirmed."""
+    try:
+        mem = memory_store.confirm_memory(memory_id)
+        return {"success": True, "data": _memory_to_dict(mem)}
+    except (MemoryValidationError, MemoryStateError) as e:
+        return {"success": False, "error": str(e)}
+    except Exception as e:
+        return {"success": False, "error": f"Unexpected: {e}"}
 
 
 # ── Main Entry Point ──

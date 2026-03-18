@@ -4,12 +4,13 @@ from __future__ import annotations
 
 from typing import Optional, TYPE_CHECKING
 
-from .models import ContextBundle, Node
+from .models import ContextBundle, Memory, Node
 from .focus import FocusResult
 from .narrative import read_narrative
 
 if TYPE_CHECKING:
     from .store import Store
+    from .memory import MemoryStore
 
 
 # ── Token estimation ─────────────────────────────────────────────
@@ -178,23 +179,52 @@ def _assemble_l2(store: "Store", node_id: str,
     return "\n\n".join(parts)
 
 
+# ── L_Memory renderer ────────────────────────────────────────────
+
+def _render_l_memory(memories: list[Memory]) -> str:
+    """Render resident memories for L_Memory injection. Budget ≤ 200 tokens."""
+    if not memories:
+        return ""
+    lines = ["## 🧠 Memory"]
+    for mem in memories:
+        prefix = f"[{mem.layer}]"
+        if mem.sub_type:
+            prefix += f"[{mem.sub_type}]"
+        lines.append(f"- {prefix} {mem.content}")
+    return "\n".join(lines)
+
+
 # ── Main assembly ────────────────────────────────────────────────
 
 def assemble(store: "Store", focus: FocusResult,
              dashboard_md: str, alerts_md: str,
              narratives_dir: str = "",
-             max_tokens: int = 10000) -> ContextBundle:
+             max_tokens: int = 10000,
+             memory_store: Optional["MemoryStore"] = None) -> ContextBundle:
     """组装完整认知包。裁剪铁律: 因果 > 关系。"""
 
     l0 = dashboard_md
     l_alert = alerts_md
 
-    # No focus → L0 + L_Alert only
+    # L_Memory: resident memories
+    l_memory = ""
+    if memory_store is not None:
+        try:
+            resident = memory_store.get_resident_memories(max_count=5)
+            l_memory = _render_l_memory(resident)
+            # Trim to 200 token budget
+            if estimate_tokens(l_memory) > 200:
+                l_memory = l_memory[:400]  # ~200 tokens
+        except Exception:
+            l_memory = ""  # fail silently, memory is optional
+
+    # No focus → L0 + L_Alert + L_Memory only
     if focus.primary is None:
-        total = estimate_tokens(l0 + l_alert)
+        total = estimate_tokens(l0 + l_alert + l_memory)
         return ContextBundle(
             l0_dashboard=l0,
             l_alert=l_alert,
+            l_memory=l_memory,
             l1_neighborhood="",
             l2_focus="",
             total_tokens=total,
@@ -224,11 +254,12 @@ def assemble(store: "Store", focus: FocusResult,
         l2 = l2[:allowed_l2_chars]
         l2_tokens = estimate_tokens(l2)
 
-    total = estimate_tokens(l0 + l_alert + l1 + l2)
+    total = estimate_tokens(l0 + l_alert + l_memory + l1 + l2)
 
     return ContextBundle(
         l0_dashboard=l0,
         l_alert=l_alert,
+        l_memory=l_memory,
         l1_neighborhood=l1,
         l2_focus=l2,
         total_tokens=total,

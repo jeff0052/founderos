@@ -37,7 +37,15 @@ def test_all_14_tools_registered():
         for tool in expected_tools:
             assert tool in registered_tools, f"Tool {tool} not registered in MCP server"
         
-        assert len(registered_tools) == 14, f"Expected 14 tools, got {len(registered_tools)}"
+        # 14 node tools + 6 memory tools = 20
+        memory_tools = [
+            "add_memory", "search_memories", "update_memory",
+            "forget_memory", "promote_memory", "confirm_memory"
+        ]
+        for tool in memory_tools:
+            assert tool in registered_tools, f"Memory tool {tool} not registered"
+
+        assert len(registered_tools) == 20, f"Expected 20 tools (14 node + 6 memory), got {len(registered_tools)}"
         
     except ImportError:
         pytest.fail("mcp_server.py should exist and be importable")

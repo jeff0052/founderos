@@ -127,6 +127,93 @@ class Alert:
 
 
 @dataclass
+class Memory:
+    id: str
+    layer: str  # fact|judgment|scratch
+    sub_type: Optional[str] = None  # preference|decision|lesson|pattern
+    content: str = ""
+    tags: list[str] = field(default_factory=list)
+    node_id: Optional[str] = None
+    based_on: list[str] = field(default_factory=list)
+    confidence: float = 0.8
+    verification: str = "auto_extracted"  # user_confirmed|system_verified|auto_extracted
+    source: str = "auto"  # auto|manual|system
+    priority: str = "P1"  # P0|P1|P2
+    needs_review: bool = False
+    created_at: str = ""
+    last_accessed_at: str = ""
+    access_count: int = 0
+    conflict_count: int = 0
+    similar_to: Optional[str] = None
+    archived_at: Optional[str] = None
+
+
+# --- Memory Pydantic Input Models ---
+
+class AddMemoryInput(BaseModel):
+    """add_memory Tool Call input."""
+    layer: str
+    sub_type: Optional[str] = None
+    content: str
+    tags: list[str] = []
+    node_id: Optional[str] = None
+    based_on: list[str] = []
+    confidence: float = 0.8
+    verification: Optional[str] = None  # auto-set based on source if not provided
+    source: str = "manual"
+    priority: str = "P1"
+
+    @field_validator("layer")
+    @classmethod
+    def check_layer(cls, v: str) -> str:
+        allowed = {"fact", "judgment", "scratch"}
+        if v not in allowed:
+            raise ValueError(f"layer must be one of {allowed}, got '{v}'")
+        return v
+
+    @field_validator("sub_type")
+    @classmethod
+    def check_sub_type(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None:
+            allowed = {"preference", "decision", "lesson", "pattern"}
+            if v not in allowed:
+                raise ValueError(f"sub_type must be one of {allowed}, got '{v}'")
+        return v
+
+    @field_validator("priority")
+    @classmethod
+    def check_priority(cls, v: str) -> str:
+        allowed = {"P0", "P1", "P2"}
+        if v not in allowed:
+            raise ValueError(f"priority must be one of {allowed}, got '{v}'")
+        return v
+
+    @field_validator("source")
+    @classmethod
+    def check_source(cls, v: str) -> str:
+        allowed = {"auto", "manual", "system"}
+        if v not in allowed:
+            raise ValueError(f"source must be one of {allowed}, got '{v}'")
+        return v
+
+    @field_validator("confidence")
+    @classmethod
+    def check_confidence(cls, v: float) -> float:
+        if not 0.0 <= v <= 1.0:
+            raise ValueError(f"confidence must be 0.0-1.0, got {v}")
+        return v
+
+    @field_validator("content")
+    @classmethod
+    def check_content(cls, v: str) -> str:
+        if not v or not v.strip():
+            raise ValueError("content must not be empty")
+        if len(v) > 600:  # ~200 Chinese chars
+            raise ValueError(f"content must be ≤200 chars (~600 bytes), got {len(v)}")
+        return v
+
+
+@dataclass
 class ContextBundle:
     l0_dashboard: str
     l_alert: str
@@ -134,3 +221,4 @@ class ContextBundle:
     l2_focus: str
     total_tokens: int
     focus_node_id: Optional[str] = None
+    l_memory: str = ""

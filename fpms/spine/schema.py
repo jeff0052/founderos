@@ -51,6 +51,43 @@ CREATE TABLE IF NOT EXISTS recent_commands (
     created_at TEXT NOT NULL,
     expires_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS memories (
+    id TEXT PRIMARY KEY,
+    layer TEXT NOT NULL CHECK(layer IN ('fact','judgment','scratch')),
+    sub_type TEXT CHECK(sub_type IS NULL OR sub_type IN ('preference','decision','lesson','pattern')),
+    content TEXT NOT NULL,
+    tags TEXT NOT NULL DEFAULT '[]',
+    node_id TEXT,
+    based_on TEXT NOT NULL DEFAULT '[]',
+    confidence REAL NOT NULL DEFAULT 0.8,
+    verification TEXT NOT NULL CHECK(verification IN ('user_confirmed','system_verified','auto_extracted')),
+    source TEXT NOT NULL CHECK(source IN ('auto','manual','system')),
+    priority TEXT NOT NULL DEFAULT 'P1' CHECK(priority IN ('P0','P1','P2')),
+    needs_review INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL,
+    last_accessed_at TEXT NOT NULL,
+    access_count INTEGER NOT NULL DEFAULT 0,
+    conflict_count INTEGER NOT NULL DEFAULT 0,
+    similar_to TEXT,
+    archived_at TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_memories_layer ON memories(layer);
+CREATE INDEX IF NOT EXISTS idx_memories_priority ON memories(priority);
+CREATE INDEX IF NOT EXISTS idx_memories_verification ON memories(verification);
+CREATE INDEX IF NOT EXISTS idx_memories_node_id ON memories(node_id);
+CREATE INDEX IF NOT EXISTS idx_memories_archived ON memories(archived_at);
+
+CREATE TABLE IF NOT EXISTS memory_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    memory_id TEXT NOT NULL,
+    event_type TEXT NOT NULL CHECK(event_type IN ('memory_created','memory_updated','memory_archived','memory_accessed','memory_promoted','memory_confirmed')),
+    payload TEXT NOT NULL DEFAULT '{}',
+    created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_memory_events_memory_id ON memory_events(memory_id);
 """
 
 

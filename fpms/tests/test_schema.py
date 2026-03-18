@@ -24,15 +24,17 @@ def tmp_db_path():
 class TestInitDB:
     """init_db creates all tables and enables WAL."""
 
-    def test_creates_all_five_tables(self, tmp_db_path):
+    def test_creates_all_tables(self, tmp_db_path):
         conn = init_db(tmp_db_path)
         cursor = conn.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
+            "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name"
         )
         tables = sorted(row[0] for row in cursor.fetchall())
         expected = sorted([
             "audit_outbox",
             "edges",
+            "memories",
+            "memory_events",
             "nodes",
             "recent_commands",
             "session_state",
@@ -50,9 +52,9 @@ class TestInitDB:
         conn1.close()
         conn2 = init_db(tmp_db_path)
         tables = conn2.execute(
-            "SELECT count(*) FROM sqlite_master WHERE type='table'"
+            "SELECT count(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
         ).fetchone()[0]
-        assert tables == 5
+        assert tables == 7  # 5 original + memories + memory_events
         conn2.close()
 
 
@@ -187,7 +189,7 @@ class TestGetConnection:
         assert isinstance(conn, sqlite3.Connection)
         # Should be able to query tables
         tables = conn.execute(
-            "SELECT count(*) FROM sqlite_master WHERE type='table'"
+            "SELECT count(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
         ).fetchone()[0]
-        assert tables == 5
+        assert tables == 7  # 5 original + memories + memory_events
         conn.close()
