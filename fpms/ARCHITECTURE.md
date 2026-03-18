@@ -173,15 +173,7 @@ CREATE TABLE audit_outbox (
     flushed INTEGER NOT NULL DEFAULT 0  -- 0=待flush, 1=已写入events.jsonl
 );
 
--- Derived tables (rebuildable)
-CREATE TABLE narrative_index (
-    node_id TEXT NOT NULL REFERENCES nodes(id),
-    entry_offset INTEGER NOT NULL,  -- line number
-    timestamp TEXT NOT NULL,
-    event_type TEXT,
-    mentions TEXT,  -- JSON array of referenced node_ids
-    PRIMARY KEY (node_id, entry_offset)
-);
+-- narrative_index: designed in PRD, deferred to v2
 ```
 
 ## Concurrency Model (并发模型)

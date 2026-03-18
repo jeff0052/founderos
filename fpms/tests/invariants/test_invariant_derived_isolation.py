@@ -14,7 +14,6 @@ import pytest
 DERIVED_TABLES = {
     "global_view_cache",
     "risk_cache",
-    "narrative_index",
     "archive_index",
     "derived_",
 }
