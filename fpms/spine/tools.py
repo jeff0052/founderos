@@ -25,6 +25,7 @@ def _node_to_dict(node: Node) -> dict:
 class ToolHandler:
     def __init__(self, store: "Store", validator_module=None, narrative_module=None,
                  risk_module=None, rollup_module=None, dashboard_module=None,
+                 focus_module=None,
                  narratives_dir: Optional[str] = None) -> None:
         self.store = store
         self.validator = validator_module
@@ -32,6 +33,7 @@ class ToolHandler:
         self.risk_module = risk_module
         self.rollup_module = rollup_module
         self.dashboard_module = dashboard_module
+        self.focus_module = focus_module
         if narratives_dir:
             self.narratives_dir = narratives_dir
         else:
@@ -370,9 +372,25 @@ class ToolHandler:
 
     def handle_shift_focus(self, params: dict) -> ToolResult:
         node_id = params.get("node_id", "")
-        self.store.set_session("focus", {"node_id": node_id})
-        return ToolResult(success=True, command_id="",
-                          data={"focus_node_id": node_id})
+
+        if self.focus_module:
+            try:
+                focus_result = self.focus_module.shift_focus(self.store, node_id)
+                return ToolResult(
+                    success=True, command_id="",
+                    data={
+                        "focus_node_id": focus_result.primary,
+                        "secondaries": focus_result.secondaries,
+                        "reason": focus_result.reason,
+                    },
+                )
+            except ValueError as e:
+                return ToolResult(success=False, command_id="", error=str(e))
+        else:
+            # Fallback: direct write (no LRU)
+            self.store.set_session("focus", {"node_id": node_id})
+            return ToolResult(success=True, command_id="",
+                              data={"focus_node_id": node_id})
 
     def handle_expand_context(self, params: dict) -> ToolResult:
         node_id = params.get("node_id", "")
