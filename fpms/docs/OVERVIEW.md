@@ -37,11 +37,16 @@ FounderOS
 | v0.3.1 | 3/18 | Memory Layer v1 | 576 |
 | **v0.4.0** | **3/18** | **Memory Tools 接入路由** | **594** |
 
+## 开发工具链
+
+- CTO Agent 装了 **gstack** — 固定角色流水线
+- 流程：设计（讨论）→ 执行（CTO + gstack）→ 收尾（更新全局）
+- 配置：`.claude/CLAUDE.md`
+
 ## 下一步
 
-1. **固定开发 SOP** — 总分总循环，参考 gstack
-2. **Phase 1 开发** — 信号检测 / 关系图谱 / 概念蒸馏 / 邮件采集
-3. **CTO Agent 实例化** — 独立 session 执行开发任务
+1. **Phase 1 开发** — 信号检测 / 关系图谱 / 概念蒸馏 / 邮件采集
+2. **CTO Agent 实例化** — 独立 session 执行开发任务
 
 ## 查看实时状态
 
