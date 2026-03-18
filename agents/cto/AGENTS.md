@@ -79,17 +79,88 @@ Kill Condition（满足任一则终止）:
 - 每步包含: 改哪个文件 → 写什么测试 → 实现什么 → 怎么验证 → commit
 - 如果 spec 覆盖多个子系统 → 拆成多个独立 plan
 
-### Phase 3: AI 实现（10% 时间）
-- 将契约（精简版）+ Module Spec + 测试用例组装为完整 prompt
-- **Subagent-Driven Development:**
-  - 每个 task spawn 一个新 agent（隔离 context）
-  - agent 完成后双重审查:
-    1. **Spec 合规审查** — 实现是否符合 Module Spec？
-    2. **代码质量审查** — 代码是否达标？
-  - 两轮都过才标记完成
-- **TDD 铁律: 先写了代码？删掉，从测试重来**
-- **不满意就重新生成，不要手动修补**
-- 每批完成后更新 FPMS task 状态
+### Phase 3: AI 实现（Subagent-Driven Development）
+
+**协议文件:** `SUBAGENT-PROTOCOL.md`（唯一定义源）  
+**Prompt 模板:** `prompts/implementer.md`, `prompts/spec-reviewer.md`, `prompts/code-quality-reviewer.md`  
+**Plan 格式:** `prompts/plan-template.md`
+
+#### 3.0 前置检查（Gate）
+- [ ] Task 满足输入契约（SUBAGENT-PROTOCOL §1）
+- [ ] Risk level 已按判定表确认（§2.2）
+- [ ] Plan 已按分级标准完成（§2.1 → plan-template.md）
+- [ ] L3/L4 任务：Plan 已经 Jeff 确认
+
+不满足任何一项，不进入 dispatch。
+
+#### 3.1 环境准备
+```bash
+git worktree add ../worktrees/task-<id> -b feat/task-<id>-<desc>
+cd ../worktrees/task-<id>
+<test_command>  # 验证测试基线，必须全绿
+```
+
+#### 3.2 Dispatch Implementer
+1. 按 SUBAGENT-PROTOCOL §2.3（Context Handoff Payload）组装上下文
+2. 填充 `prompts/implementer.md` 模板占位符
+3. 按 §7（模型策略）选择模型
+4. Dispatch subagent
+5. 更新 FPMS narrative：`STATE: READY → IMPLEMENTING`
+
+#### 3.3 处理 Implementer 结果
+解析 `=== RESULT START/END ===` 区块：
+
+| status_code | Action |
+|-------------|--------|
+| DONE | → 3.4 Spec Review |
+| DONE_WITH_CONCERNS | 评估 concerns → 3.4 或补充后重新 dispatch |
+| NEEDS_CONTEXT | 补充信息 → 重新 dispatch（同模型） |
+| BLOCKED | 按 SUBAGENT-PROTOCOL §6 升级路径处理 |
+
+#### 3.4 Spec Review
+1. 组装 Reviewer Payload（SUBAGENT-PROTOCOL §2.3.2）— 不含 implementer prompt
+2. 填充 `prompts/spec-reviewer.md`
+3. Dispatch spec-reviewer subagent
+4. 更新 FPMS narrative：`STATE: IMPLEMENTING → SPEC_REVIEW`
+
+| verdict | Action |
+|---------|--------|
+| PASS | → 3.5 Quality Review |
+| FAIL | → REWORK → 重新 Spec Review（rework_round +1，最多 3 轮） |
+| 3 轮不收敛 | → ESCALATED → 通知 Jeff（附 §6.3 升级载荷） |
+
+#### 3.5 Code Quality Review
+1. 获取 git diff（BASE_SHA → HEAD_SHA）
+2. 填充 `prompts/code-quality-reviewer.md`
+3. Dispatch quality-reviewer subagent
+4. 更新 FPMS narrative：`STATE: SPEC_REVIEW → QUALITY_REVIEW`
+
+| verdict | Action |
+|---------|--------|
+| Approve | → 3.6 完成 |
+| Approve_with_debt | → 3.6 完成 + P2 items 录入 FPMS backlog |
+| Reject | → REWORK → 重新 Quality Review（rework_round +1，最多 3 轮） |
+| P0 found / constitution_violation | → ESCALATED → 通知 Jeff |
+
+#### 3.6 完成
+```bash
+cd <main-repo>
+git merge feat/task-<id>-<desc>
+git worktree remove ../worktrees/task-<id>
+```
+- 更新 FPMS task 状态：`done`
+- 更新 FPMS narrative：完成摘要 + 全流程审计
+- 进入下一个 task
+
+#### 3.7 放弃
+```bash
+git worktree remove ../worktrees/task-<id>
+git branch -D feat/task-<id>-<desc>
+```
+- 更新 FPMS task 状态：`dropped`
+- 记录原因到 narrative
+
+**TDD 铁律: 先写了代码？删掉，从测试重来。不满意就重新生成，不要手动修补。**
 
 ### Phase 4: 验证（20% 时间）
 自动化 pipeline（按顺序）:
