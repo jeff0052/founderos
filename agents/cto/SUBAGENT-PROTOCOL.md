@@ -411,7 +411,9 @@ cd ../worktrees/task-<id>
 
 # subagent 工作...
 
-# 成功：合并 + 清理
+# 成功：验证 → 合并 → 清理
+cd ../worktrees/task-<id>
+git status --short  # MUST be clean. If dirty → subagent forgot to commit → fix before merge
 cd <main-repo>
 git merge feat/task-<id>-<desc>
 git worktree remove ../worktrees/task-<id>
