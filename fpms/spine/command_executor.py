@@ -53,6 +53,10 @@ class CommandExecutor:
             from spine import dashboard as dashboard_module
         except ImportError:
             dashboard_module = None
+        try:
+            from spine import focus as focus_module
+        except ImportError:
+            focus_module = None
 
         self.handler = ToolHandler(
             store=store,
@@ -61,6 +65,7 @@ class CommandExecutor:
             risk_module=risk_module,
             rollup_module=rollup_module,
             dashboard_module=dashboard_module,
+            focus_module=focus_module,
             narratives_dir=narratives_dir if narratives_dir else None,
         )
 
