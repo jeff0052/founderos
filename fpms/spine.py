@@ -76,8 +76,11 @@ def cmd_tool(args: list[str]):
     store, executor = _get_executor()
     result = executor.execute(command_id, tool_name, tool_args)
 
-    # Flush events after write
-    if result.success and tool_name not in ("get_node", "search_nodes", "shift_focus", "expand_context"):
+    # Flush events after write (memory tools handle own commits)
+    _NO_FLUSH = {"get_node", "search_nodes", "shift_focus", "expand_context",
+                 "memory_add", "memory_search", "memory_update",
+                 "memory_forget", "memory_promote", "memory_confirm"}
+    if result.success and tool_name not in _NO_FLUSH:
         try:
             store.flush_events()
         except Exception:

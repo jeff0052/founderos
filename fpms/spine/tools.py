@@ -1,4 +1,4 @@
-"""Tool Call handlers for the 14 FPMS tools."""
+"""Tool Call handlers for the 14 FPMS tools + 6 Memory tools."""
 
 from __future__ import annotations
 
@@ -7,7 +7,8 @@ from dataclasses import asdict
 from datetime import datetime, timezone
 from typing import Optional, TYPE_CHECKING
 
-from .models import Node, Edge, ToolResult, CreateNodeInput, UpdateStatusInput, UpdateFieldInput
+from .models import Node, Edge, ToolResult, CreateNodeInput, UpdateStatusInput, UpdateFieldInput, AddMemoryInput
+from .memory import MemoryStore, MemoryValidationError, MemoryStateError
 from .validator import ValidationError
 
 if TYPE_CHECKING:
@@ -34,6 +35,7 @@ class ToolHandler:
         self.rollup_module = rollup_module
         self.dashboard_module = dashboard_module
         self.focus_module = focus_module
+        self.memory_store = MemoryStore(store)
         if narratives_dir:
             self.narratives_dir = narratives_dir
         else:
@@ -50,6 +52,9 @@ class ToolHandler:
         except ValidationError as e:
             return ToolResult(success=False, command_id="",
                               error=e.message, suggestion=e.suggestion)
+        except (MemoryValidationError, MemoryStateError) as e:
+            return ToolResult(success=False, command_id="",
+                              error=str(e))
         except Exception as e:
             return ToolResult(success=False, command_id="",
                               error=str(e))
@@ -426,3 +431,44 @@ class ToolHandler:
             success=True, command_id="",
             data={"nodes": [_node_to_dict(n) for n in nodes]},
         )
+
+    # --- Memory Tools ---
+
+    def _memory_to_dict(self, mem) -> dict:
+        return asdict(mem)
+
+    def handle_memory_add(self, params: dict) -> ToolResult:
+        inp = AddMemoryInput(**params)
+        mem = self.memory_store.add_memory(inp)
+        return ToolResult(success=True, command_id="",
+                          data=self._memory_to_dict(mem))
+
+    def handle_memory_search(self, params: dict) -> ToolResult:
+        results = self.memory_store.search_memories(**params)
+        return ToolResult(success=True, command_id="",
+                          data={"memories": [self._memory_to_dict(m) for m in results]})
+
+    def handle_memory_update(self, params: dict) -> ToolResult:
+        memory_id = params.pop("memory_id", "")
+        mem = self.memory_store.update_memory(memory_id, params)
+        return ToolResult(success=True, command_id="",
+                          data=self._memory_to_dict(mem))
+
+    def handle_memory_forget(self, params: dict) -> ToolResult:
+        memory_id = params.get("memory_id", "")
+        mem = self.memory_store.forget(memory_id)
+        return ToolResult(success=True, command_id="",
+                          data=self._memory_to_dict(mem))
+
+    def handle_memory_promote(self, params: dict) -> ToolResult:
+        memory_id = params.pop("memory_id", "")
+        target_layer = params.pop("target_layer", "")
+        mem = self.memory_store.promote_memory(memory_id, target_layer, **params)
+        return ToolResult(success=True, command_id="",
+                          data=self._memory_to_dict(mem))
+
+    def handle_memory_confirm(self, params: dict) -> ToolResult:
+        memory_id = params.get("memory_id", "")
+        mem = self.memory_store.confirm_memory(memory_id)
+        return ToolResult(success=True, command_id="",
+                          data=self._memory_to_dict(mem))

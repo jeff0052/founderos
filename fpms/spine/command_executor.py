@@ -6,7 +6,7 @@ import json
 from datetime import datetime, timedelta, timezone
 from typing import Optional, TYPE_CHECKING
 
-from .models import ToolResult, CreateNodeInput, UpdateStatusInput, UpdateFieldInput
+from .models import ToolResult, CreateNodeInput, UpdateStatusInput, UpdateFieldInput, AddMemoryInput
 from .tools import ToolHandler
 
 if TYPE_CHECKING:
@@ -18,10 +18,17 @@ _PYDANTIC_MAP = {
     "create_node": CreateNodeInput,
     "update_status": UpdateStatusInput,
     "update_field": UpdateFieldInput,
+    "memory_add": AddMemoryInput,
 }
 
 # Read-only tools: no audit, no transaction wrapping
-_READ_TOOLS = {"get_node", "search_nodes"}
+_READ_TOOLS = {"get_node", "search_nodes", "memory_search"}
+
+# Memory tools: own audit via memory_events, skip FPMS audit_outbox
+_MEMORY_TOOLS = {
+    "memory_add", "memory_search", "memory_update",
+    "memory_forget", "memory_promote", "memory_confirm",
+}
 
 # Write tools that produce audit events
 _WRITE_TOOLS = {
