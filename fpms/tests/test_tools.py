@@ -208,6 +208,37 @@ class TestUpdateStatus:
         assert result.data["status"] == "active"
 
 
+    def test_drop_with_active_children_warns(self, handler, store):
+        """Dropping a node with active children should succeed but return warnings."""
+        parent_id = _make_root_node(handler, summary="Parent")
+        handler.handle("update_status", {"node_id": parent_id, "new_status": "active"})
+
+        child_result = handler.handle("create_node", {
+            "title": "Child", "node_type": "task", "parent_id": parent_id,
+        })
+        child_id = child_result.data["id"]
+        handler.handle("update_field", {"node_id": child_id, "field": "summary", "value": "child summary"})
+        handler.handle("update_status", {"node_id": child_id, "new_status": "active"})
+
+        result = handler.handle("update_status", {
+            "node_id": parent_id, "new_status": "dropped",
+        })
+        assert result.success is True
+        assert len(result.warnings) > 0
+        assert child_id in result.warnings[0]
+
+    def test_drop_without_active_children_no_warning(self, handler, store):
+        """Dropping a node with no active children should not warn."""
+        parent_id = _make_root_node(handler, summary="Parent")
+        handler.handle("update_status", {"node_id": parent_id, "new_status": "active"})
+
+        result = handler.handle("update_status", {
+            "node_id": parent_id, "new_status": "dropped",
+        })
+        assert result.success is True
+        assert len(result.warnings) == 0
+
+
 # ============================================================
 # update_field
 # ============================================================

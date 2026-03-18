@@ -143,10 +143,22 @@ class ToolHandler:
         self._write_narrative(inp.node_id, "update_status",
                               "Status: {} -> {}".format(node.status, inp.new_status))
 
+        # Warn if dropping a node with active children
+        warnings = []
+        if inp.new_status == "dropped" and children:
+            active_children = [c for c in children if c.status in ("active", "waiting", "inbox")]
+            if active_children:
+                ids = ", ".join(c.id for c in active_children)
+                warnings.append(
+                    "Warning: dropping node with active children: {}. "
+                    "Consider dropping or completing them first.".format(ids)
+                )
+
         return ToolResult(
             success=True, command_id="",
             data=_node_to_dict(updated),
             affected_nodes=[inp.node_id],
+            warnings=warnings,
         )
 
     def handle_update_field(self, params: dict) -> ToolResult:
