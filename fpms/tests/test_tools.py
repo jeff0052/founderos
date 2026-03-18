@@ -472,6 +472,47 @@ class TestUnarchive:
         # Should fail or no-op since node is not archived
         assert isinstance(result.success, bool)
 
+    def test_unarchive_with_new_status(self, handler, store):
+        """Unarchive + atomically set new status."""
+        node_id = _make_root_node(handler, summary="Ready")
+        handler.handle("update_status", {"node_id": node_id, "new_status": "active"})
+        handler.handle("update_status", {"node_id": node_id, "new_status": "done"})
+        with store.transaction():
+            store.update_node(node_id, {"archived_at": "2026-01-01T00:00:00Z"})
+
+        result = handler.handle("unarchive", {"node_id": node_id, "new_status": "active"})
+        assert result.success is True
+        node = store.get_node(node_id)
+        assert node.archived_at is None
+        assert node.status == "active"
+
+    def test_unarchive_with_invalid_new_status(self, handler, store):
+        """Reject invalid new_status."""
+        node_id = _make_root_node(handler, summary="Ready")
+        handler.handle("update_status", {"node_id": node_id, "new_status": "active"})
+        handler.handle("update_status", {"node_id": node_id, "new_status": "done"})
+        with store.transaction():
+            store.update_node(node_id, {"archived_at": "2026-01-01T00:00:00Z"})
+
+        result = handler.handle("unarchive", {"node_id": node_id, "new_status": "bogus"})
+        assert result.success is False
+        # Node should still be archived
+        node = store.get_node(node_id)
+        assert node.archived_at is not None
+
+    def test_unarchive_without_new_status_preserves_old_status(self, handler, store):
+        """Without new_status, status should remain unchanged."""
+        node_id = _make_root_node(handler, summary="Ready")
+        handler.handle("update_status", {"node_id": node_id, "new_status": "active"})
+        handler.handle("update_status", {"node_id": node_id, "new_status": "done"})
+        with store.transaction():
+            store.update_node(node_id, {"archived_at": "2026-01-01T00:00:00Z"})
+
+        result = handler.handle("unarchive", {"node_id": node_id})
+        assert result.success is True
+        node = store.get_node(node_id)
+        assert node.status == "done"  # unchanged
+
 
 # ============================================================
 # set_persistent

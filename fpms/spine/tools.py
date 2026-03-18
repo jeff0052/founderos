@@ -281,6 +281,7 @@ class ToolHandler:
 
     def handle_unarchive(self, params: dict) -> ToolResult:
         node_id = params.get("node_id", "")
+        new_status = params.get("new_status", None)
 
         node = self.store.get_node(node_id)
         if node is None:
@@ -291,14 +292,43 @@ class ToolHandler:
             return ToolResult(success=False, command_id="",
                               error="Node {} is not archived.".format(node_id))
 
-        now = _utcnow_iso()
-        with self.store.transaction():
-            updated = self.store.update_node(node_id, {
-                "archived_at": None,
-                "status_changed_at": now,
-            })
+        # Validate new_status if provided
+        if new_status is not None:
+            allowed = {"inbox", "active", "waiting", "done", "dropped"}
+            if new_status not in allowed:
+                return ToolResult(
+                    success=False, command_id="",
+                    error="new_status must be one of {}, got '{}'.".format(allowed, new_status),
+                    suggestion="Valid statuses: inbox, active, waiting, done, dropped",
+                )
+            # Validate status transition from current status
+            if self.validator:
+                try:
+                    children = self.store.get_children(node.id, include_archived=True)
+                    self.validator.validate_status_transition(
+                        node.status, new_status, node, children
+                    )
+                except ValidationError as e:
+                    return ToolResult(
+                        success=False, command_id="",
+                        error=e.message, suggestion=e.suggestion,
+                    )
 
-        self._write_narrative(node_id, "unarchive", "Node unarchived")
+        now = _utcnow_iso()
+        fields = {
+            "archived_at": None,
+            "status_changed_at": now,
+        }
+        if new_status is not None:
+            fields["status"] = new_status
+
+        with self.store.transaction():
+            updated = self.store.update_node(node_id, fields)
+
+        narrative_msg = "Node unarchived"
+        if new_status is not None:
+            narrative_msg = "Node unarchived, status set to {}".format(new_status)
+        self._write_narrative(node_id, "unarchive", narrative_msg)
 
         return ToolResult(
             success=True, command_id="",
