@@ -1,0 +1,603 @@
+{
+  "exported_at": "2026-03-20T19:53:39.416815",
+  "goals": [
+    {
+      "id": "goal-ced834",
+      "title": "BinancePay",
+      "status": "active",
+      "summary": "支付公司核心业务 — 与 Binance 合作的支付项目。三条线：国家码支付、PSP/TSP 接入 Binance Pay、On-chain/On-ramping。FounderOS 第一个实战管理场景。",
+      "updated_at": "2026-03-19T06:48:44.700245+00:00"
+    },
+    {
+      "id": "goal-6c8a",
+      "title": "FounderOS",
+      "status": "active",
+      "summary": "一人公司的底层操作系统 — 让一个 Founder 通过 AI Office 体系管理整家公司。核心循环 State+Signal→Decision→Action→NewState。V3 阶段：FPMS（State）已建，CTO Agent（第一个 Office）待搭建。",
+      "updated_at": "2026-03-17T15:43:44.076018+00:00"
+    }
+  ],
+  "projects": [
+    {
+      "id": "project-4acae1",
+      "title": "BinancePay",
+      "status": "active",
+      "summary": "与 Binance 的支付合作项目。三条线：1) 国家码支付合作（SG/PH/VN/JP/TH）2) PSP/TSP 接入 Binance Pay 3) On-chain/On-ramping 服务",
+      "parent_id": "goal-ced834",
+      "task_counts": {
+        "inbox": 4
+      },
+      "total_tasks": 4,
+      "updated_at": "2026-03-19T06:48:06.661769+00:00"
+    },
+    {
+      "id": "project-a501",
+      "title": "CTO Agent",
+      "status": "active",
+      "summary": "能开发维护大型系统的 AI CTO — 从小开始，快速迭代，最终具备独立交付复杂产品的能力（如支付系统级别）",
+      "parent_id": "goal-6c8a",
+      "task_counts": {
+        "active": 1,
+        "done": 4,
+        "inbox": 5
+      },
+      "total_tasks": 10,
+      "updated_at": "2026-03-17T15:00:28.640104+00:00"
+    },
+    {
+      "id": "project-7842",
+      "title": "FPMS 分形项目管理系统",
+      "status": "active",
+      "summary": "AI Agent 确定性项目管理引擎，v1 已上线，边用边迭代",
+      "parent_id": "goal-6c8a",
+      "task_counts": {
+        "done": 10,
+        "inbox": 8
+      },
+      "total_tasks": 18,
+      "updated_at": "2026-03-17T14:39:28.034525+00:00"
+    },
+    {
+      "id": "project-0e05",
+      "title": "支付系统",
+      "status": "dropped",
+      "summary": "全栈支付平台 — 收单、发卡、钱包、跨境、稳定币支付。金融级容错要求，数据一致性零容忍",
+      "parent_id": "goal-6c8a",
+      "task_counts": {},
+      "total_tasks": 0,
+      "updated_at": "2026-03-19T06:46:31.697347+00:00"
+    },
+    {
+      "id": "project-5f1958",
+      "title": "Knowledge System Phase 1",
+      "status": "inbox",
+      "summary": null,
+      "parent_id": "goal-6c8a",
+      "task_counts": {
+        "inbox": 13
+      },
+      "total_tasks": 13,
+      "updated_at": "2026-03-18T09:30:37.550925+00:00"
+    },
+    {
+      "id": "project-abb23a",
+      "title": "Knowledge System Phase 2",
+      "status": "inbox",
+      "summary": null,
+      "parent_id": "goal-6c8a",
+      "task_counts": {},
+      "total_tasks": 0,
+      "updated_at": "2026-03-18T09:31:25.012536+00:00"
+    },
+    {
+      "id": "project-c876b5",
+      "title": "Knowledge System Phase 3",
+      "status": "inbox",
+      "summary": null,
+      "parent_id": "goal-6c8a",
+      "task_counts": {},
+      "total_tasks": 0,
+      "updated_at": "2026-03-18T09:31:25.405803+00:00"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "task-d11b",
+      "title": "CTO Agent 实例化为独立 session",
+      "status": "active",
+      "summary": "目前CTO Agent是文档框架，由Main Agent模拟执行。应实例化为独立ACP session，能自主接收FPMS task。",
+      "parent_id": "project-a501",
+      "updated_at": "2026-03-18T09:31:36.294537+00:00"
+    },
+    {
+      "id": "task-7406",
+      "title": "[M5] handle_shift_focus 绕过 focus.py 的 LRU 逻辑",
+      "status": "done",
+      "summary": "tools.py 直接写 store.set_session(focus)，完全绕过 focus.shift_focus() 的 LRU 淘汰和衰减逻辑",
+      "parent_id": "project-7842",
+      "updated_at": "2026-03-18T03:21:08.249149+00:00"
+    },
+    {
+      "id": "task-4d80",
+      "title": "[M3] dropped 状态缺子节点 active children warning",
+      "status": "done",
+      "summary": "PRD 要求 dropped 时有 active children 应生成 alerts，当前 tools.py 没有生成 warnings",
+      "parent_id": "project-7842",
+      "updated_at": "2026-03-18T03:19:04.693866+00:00"
+    },
+    {
+      "id": "task-63d2",
+      "title": "[M4] unarchive 工具没传 new_status 参数",
+      "status": "done",
+      "summary": "INTERFACES.md 定义 unarchive(new_status=) 可原子设置新状态，tools.py 的 handle_unarchive 没传",
+      "parent_id": "project-7842",
+      "updated_at": "2026-03-18T03:16:49.987878+00:00"
+    },
+    {
+      "id": "task-f491",
+      "title": "[M7] inbox stale 检测偏离 PRD 但无 ADR 说明",
+      "status": "done",
+      "summary": "risk.py 对 inbox 用 created_at 判断 stale，PRD 说 active/waiting 才算。设计决策合理但应记录 ADR",
+      "parent_id": "project-7842",
+      "updated_at": "2026-03-18T03:09:51.638965+00:00"
+    },
+    {
+      "id": "task-f09e",
+      "title": "[M2] import 风格不统一（绝对/相对混用）",
+      "status": "done",
+      "summary": "compression.py 用绝对 import，其他用相对。统一为相对 import。",
+      "parent_id": "project-7842",
+      "updated_at": "2026-03-18T03:08:44.709367+00:00"
+    },
+    {
+      "id": "task-e911",
+      "title": "[M6] narrative_index 表定义了但没有写入",
+      "status": "done",
+      "summary": "schema.py 定义了 narrative_index 表，整个代码库没有写入。要么删掉(YAGNI)要么标注 v2 TODO",
+      "parent_id": "project-7842",
+      "updated_at": "2026-03-18T02:52:46.868245+00:00"
+    },
+    {
+      "id": "task-4bd3",
+      "title": "Dry Run 经验固化 + 模板迭代",
+      "status": "done",
+      "summary": "dry run lessons记录, spec-reviewer防误判, implementer加测试覆盖要求, SUBAGENT-PROTOCOL加L1/L2宽松规则",
+      "parent_id": "project-a501",
+      "updated_at": "2026-03-18T02:39:02.214999+00:00"
+    },
+    {
+      "id": "task-717f",
+      "title": "执行引擎 v1 交付",
+      "status": "done",
+      "summary": "PRD v2 + DESIGN v1.1 + SUBAGENT-PROTOCOL + 4个prompt模板 + AGENTS.md Phase 3改写 + dry run完成",
+      "parent_id": "project-a501",
+      "updated_at": "2026-03-18T02:39:01.966119+00:00"
+    },
+    {
+      "id": "task-a489",
+      "title": "接入方式是草台 exec，应升级为 MCP Server",
+      "status": "done",
+      "summary": "现在通过 shell exec 调 Python CLI，有进程开销+错误处理粗糙。正规做法是包装成 MCP tool server",
+      "parent_id": "project-7842",
+      "updated_at": "2026-03-18T01:54:06.282247+00:00"
+    },
+    {
+      "id": "task-93e7",
+      "title": "[S3] store.py get_connection() 不建表不开 WAL",
+      "status": "done",
+      "summary": "Store.__init__ 调 get_connection() 只开 foreign_keys，不调 init_db()。首次使用连到空 DB 报错。修复：__init__ 应调 init_db()。",
+      "parent_id": "project-7842",
+      "updated_at": "2026-03-17T18:23:04.569169+00:00"
+    },
+    {
+      "id": "task-819d",
+      "title": "[S2] validator.py 每次校验新开 DB 连接，事务隔离破裂",
+      "status": "done",
+      "summary": "validate_dag_safety/validate_attach/validate_dependency 每次 sqlite3.connect(db) 新开连接，不复用 store._conn。事务内新增节点 validate 看不到。修复：接收 store 对象用 store._conn。",
+      "parent_id": "project-7842",
+      "updated_at": "2026-03-17T18:23:04.314538+00:00"
+    },
+    {
+      "id": "task-c335",
+      "title": "[S1] recovery.py 传参错误：max_tokens 被当成 narratives_dir",
+      "status": "done",
+      "summary": "bundle.assemble() 第5个位置参数是 narratives_dir(str)，recovery.py 传了 max_tokens(int)。叙事永远读不到，max_tokens 永远默认值。修复：改为关键字参数。",
+      "parent_id": "project-7842",
+      "updated_at": "2026-03-17T18:23:04.058235+00:00"
+    },
+    {
+      "id": "task-128a",
+      "title": "CTO Agent workspace 搭建",
+      "status": "done",
+      "summary": "SOUL.md + AGENTS.md + MEMORY.md + CONSTITUTION.md + repos.md 完成",
+      "parent_id": "project-a501",
+      "updated_at": "2026-03-17T16:42:53.272554+00:00"
+    },
+    {
+      "id": "task-d140",
+      "title": "CTO Agent 需求文档",
+      "status": "done",
+      "summary": "定义 CTO Agent 的能力要求、行为准则、开发流程、与 Jeff 的协作模式",
+      "parent_id": "project-a501",
+      "updated_at": "2026-03-17T16:42:33.083177+00:00"
+    },
+    {
+      "id": "task-bc1a73",
+      "title": "On-ramping 方案评估",
+      "status": "inbox",
+      "summary": "评估 Binance on-ramping 服务，与现有候选方案对比",
+      "parent_id": "project-4acae1",
+      "updated_at": "2026-03-19T06:46:43.575079+00:00"
+    },
+    {
+      "id": "task-85b97c",
+      "title": "PSP 分润方案确定 + 邮件提交 Binance",
+      "status": "inbox",
+      "summary": "确定 TSP 费率（1% or 1.5%）、与 PSP 协商分润、邮件提交给 Binance",
+      "parent_id": "project-4acae1",
+      "updated_at": "2026-03-19T06:46:43.447353+00:00"
+    },
+    {
+      "id": "task-43a7ad",
+      "title": "注册 Binance TSP 账户 + KYB",
+      "status": "inbox",
+      "summary": "Binance Pay 接入前置：注册 TSP 账户、完成 KYB 流程、后续 PSP 也需注册",
+      "parent_id": "project-4acae1",
+      "updated_at": "2026-03-19T06:46:43.319899+00:00"
+    },
+    {
+      "id": "task-8570d3",
+      "title": "回复 Binance：5 区域 provider/timeline/rate/FX markup",
+      "status": "inbox",
+      "summary": "整理 SG/PH/VN/JP/TH 的 provider 名单、launch timeline、commercial rate、FX markup 定价方式",
+      "parent_id": "project-4acae1",
+      "updated_at": "2026-03-19T06:46:43.191583+00:00"
+    },
+    {
+      "id": "task-f55534",
+      "title": "CTO Agent 装 Superpowers skills",
+      "status": "inbox",
+      "summary": null,
+      "parent_id": "project-a501",
+      "updated_at": "2026-03-18T09:31:36.163301+00:00"
+    },
+    {
+      "id": "task-ab56cc",
+      "title": "预测性建议引擎",
+      "status": "inbox",
+      "summary": null,
+      "parent_id": "goal-6c8a",
+      "updated_at": "2026-03-18T09:31:25.667291+00:00"
+    },
+    {
+      "id": "task-700cf8",
+      "title": "知识图谱 + 多跳推理",
+      "status": "inbox",
+      "summary": null,
+      "parent_id": "goal-6c8a",
+      "updated_at": "2026-03-18T09:31:25.537290+00:00"
+    },
+    {
+      "id": "task-379764",
+      "title": "多 Agent 记忆共享协议",
+      "status": "inbox",
+      "summary": null,
+      "parent_id": "goal-6c8a",
+      "updated_at": "2026-03-18T09:31:25.275260+00:00"
+    },
+    {
+      "id": "task-2f55fa",
+      "title": "向量数据库选型 + embedding 管道",
+      "status": "inbox",
+      "summary": null,
+      "parent_id": "goal-6c8a",
+      "updated_at": "2026-03-18T09:31:25.143942+00:00"
+    },
+    {
+      "id": "task-d747b6",
+      "title": "邮件 → Signal/Entity 管道",
+      "status": "inbox",
+      "summary": null,
+      "parent_id": "project-5f1958",
+      "updated_at": "2026-03-18T09:31:08.356159+00:00"
+    },
+    {
+      "id": "task-609a45",
+      "title": "邮件接入方案选型 + 采集实现",
+      "status": "inbox",
+      "summary": null,
+      "parent_id": "project-5f1958",
+      "updated_at": "2026-03-18T09:31:08.225649+00:00"
+    },
+    {
+      "id": "task-796f9d",
+      "title": "Concept 版本管理 + 双向关联",
+      "status": "inbox",
+      "summary": null,
+      "parent_id": "project-5f1958",
+      "updated_at": "2026-03-18T09:31:08.094964+00:00"
+    },
+    {
+      "id": "task-39e953",
+      "title": "Concept 数据模型 + 蒸馏管道",
+      "status": "inbox",
+      "summary": null,
+      "parent_id": "project-5f1958",
+      "updated_at": "2026-03-18T09:31:07.963397+00:00"
+    },
+    {
+      "id": "task-0a76ab",
+      "title": "关系图谱 spine tools",
+      "status": "inbox",
+      "summary": null,
+      "parent_id": "project-5f1958",
+      "updated_at": "2026-03-18T09:31:07.831877+00:00"
+    },
+    {
+      "id": "task-e032fe",
+      "title": "关系图谱 bootstrap + 可视化",
+      "status": "inbox",
+      "summary": null,
+      "parent_id": "project-5f1958",
+      "updated_at": "2026-03-18T09:31:07.700909+00:00"
+    },
+    {
+      "id": "task-90c7f2",
+      "title": "Entity/Relationship CRUD + 温度衰减",
+      "status": "inbox",
+      "summary": null,
+      "parent_id": "project-5f1958",
+      "updated_at": "2026-03-18T09:31:07.569546+00:00"
+    },
+    {
+      "id": "task-ef7431",
+      "title": "Entity + Relationship 数据模型",
+      "status": "inbox",
+      "summary": null,
+      "parent_id": "project-5f1958",
+      "updated_at": "2026-03-18T09:31:07.438046+00:00"
+    },
+    {
+      "id": "task-343699",
+      "title": "Signal 检测准确率基准测试",
+      "status": "inbox",
+      "summary": null,
+      "parent_id": "project-5f1958",
+      "updated_at": "2026-03-18T09:30:51.942215+00:00"
+    },
+    {
+      "id": "task-cf3867",
+      "title": "Signal Dashboard + spine tools",
+      "status": "inbox",
+      "summary": null,
+      "parent_id": "project-5f1958",
+      "updated_at": "2026-03-18T09:30:51.811453+00:00"
+    },
+    {
+      "id": "task-87d0b4",
+      "title": "Signal → Memory 自动写入管道",
+      "status": "inbox",
+      "summary": null,
+      "parent_id": "project-5f1958",
+      "updated_at": "2026-03-18T09:30:51.680467+00:00"
+    },
+    {
+      "id": "task-b29f52",
+      "title": "Signal Rules 引擎",
+      "status": "inbox",
+      "summary": null,
+      "parent_id": "project-5f1958",
+      "updated_at": "2026-03-18T09:30:51.549174+00:00"
+    },
+    {
+      "id": "task-100f4a",
+      "title": "Signal 数据模型设计",
+      "status": "inbox",
+      "summary": null,
+      "parent_id": "project-5f1958",
+      "updated_at": "2026-03-18T09:30:51.418655+00:00"
+    },
+    {
+      "id": "task-3d35c7",
+      "title": "Memory Tools 接入 spine 路由",
+      "status": "inbox",
+      "summary": null,
+      "parent_id": "project-7842",
+      "updated_at": "2026-03-18T09:30:51.288007+00:00"
+    },
+    {
+      "id": "task-73ce2b",
+      "title": "[BUG] search_nodes filters 参数不生效",
+      "status": "inbox",
+      "summary": "search_nodes({\"filters\":{\"status\":\"inbox\"}}) 返回全部节点，filters 没有被应用。需要检查 store.search_nodes 的 filter 实现。",
+      "parent_id": "project-7842",
+      "updated_at": "2026-03-18T05:17:24.570768+00:00"
+    },
+    {
+      "id": "task-f916",
+      "title": "执行引擎 v2 — 代码化升级评估",
+      "status": "inbox",
+      "summary": "SUBAGENT-PROTOCOL §10定义了文档→代码升级门槛。30个task后评估是否需要Constitution Guard代码化。",
+      "parent_id": "project-a501",
+      "updated_at": "2026-03-18T02:39:15.413957+00:00"
+    },
+    {
+      "id": "task-c705",
+      "title": "Reviewer 双阶段实验",
+      "status": "inbox",
+      "summary": "审查建议：reviewer先独立审代码，再对照implementer report。需要跑对比实验验证是否提升精度。",
+      "parent_id": "project-a501",
+      "updated_at": "2026-03-18T02:39:15.289592+00:00"
+    },
+    {
+      "id": "task-d251",
+      "title": "状态转移守卫表补全",
+      "status": "inbox",
+      "summary": "DESIGN审查指出状态机缺transition guard（trigger/judge/evidence）。跑更多task积累数据后补。",
+      "parent_id": "project-a501",
+      "updated_at": "2026-03-18T02:39:15.165257+00:00"
+    },
+    {
+      "id": "task-5d87",
+      "title": "Spec Reviewer 精度提升",
+      "status": "inbox",
+      "summary": "dry run误判率1/3，需要迭代prompt降低false positive。积累数据后分析误判模式。",
+      "parent_id": "project-a501",
+      "updated_at": "2026-03-18T02:39:15.039008+00:00"
+    },
+    {
+      "id": "task-d89d",
+      "title": "[M1] archive/command_executor 直接访问 store._conn 绕过封装",
+      "status": "inbox",
+      "summary": "应给 Store 加 query_raw() 等公共方法，不直接操作 _conn",
+      "parent_id": "project-7842",
+      "updated_at": "2026-03-17T18:13:01.263606+00:00"
+    },
+    {
+      "id": "task-d7b6",
+      "title": "叙事压缩只有规则引擎，缺 LLM fallback",
+      "status": "inbox",
+      "summary": "FR-12 设计了 Ollama fallback，v1 只实现了规则压缩。复杂叙事链压缩质量有限",
+      "parent_id": "project-7842",
+      "updated_at": "2026-03-17T14:29:17.875122+00:00"
+    },
+    {
+      "id": "task-94cc",
+      "title": "看板没有自动推送到 session context",
+      "status": "inbox",
+      "summary": "bootstrap 跑了但输出是 stdout，不是注入 system prompt。需要 hook 或 before_prompt_build 集成",
+      "parent_id": "project-7842",
+      "updated_at": "2026-03-17T14:29:17.749643+00:00"
+    },
+    {
+      "id": "task-c108",
+      "title": "search_nodes 缺全文搜索",
+      "status": "inbox",
+      "summary": "目前只能按 status/parent_id 过滤，不能按 title/summary 关键词搜索。用户说项目名时匹配困难",
+      "parent_id": "project-7842",
+      "updated_at": "2026-03-17T14:29:17.623301+00:00"
+    },
+    {
+      "id": "task-a76d",
+      "title": "意图识别靠 LLM 猜，无确定性匹配",
+      "status": "inbox",
+      "summary": "用户说的话是否与项目相关，完全靠 LLM 语义判断。已有节点的关键词匹配可以加确定性层",
+      "parent_id": "project-7842",
+      "updated_at": "2026-03-17T14:29:17.497189+00:00"
+    },
+    {
+      "id": "task-197b",
+      "title": "Bootstrap 靠 agent 记得跑，无系统保证",
+      "status": "inbox",
+      "summary": "AGENTS.md 写了一行提醒，但 agent 可能忘。应做成 agent:bootstrap hook 自动注入",
+      "parent_id": "project-7842",
+      "updated_at": "2026-03-17T14:29:17.371248+00:00"
+    }
+  ],
+  "memories": [],
+  "stats": {
+    "task_distribution": {
+      "active": 1,
+      "done": 14,
+      "inbox": 34
+    },
+    "project_distribution": {
+      "active": 3,
+      "dropped": 1,
+      "inbox": 3
+    },
+    "memory_distribution": {
+      "fact": {
+        "PP0": 7,
+        "PP1": 4
+      },
+      "judgment": {
+        "PP0": 12,
+        "PP1": 1
+      },
+      "scratch": {
+        "PP1": 1,
+        "PP2": 1
+      }
+    },
+    "overview": {
+      "total_nodes": 58,
+      "total_goals": 2,
+      "total_projects": 7,
+      "total_tasks": 49,
+      "completed_tasks": 14,
+      "completion_rate": 28.6
+    }
+  },
+  "recent_activity": [
+    {
+      "id": "goal-ced834",
+      "title": "BinancePay",
+      "status": "active",
+      "node_type": "goal",
+      "updated_at": "2026-03-19T06:48:44.700245+00:00"
+    },
+    {
+      "id": "project-4acae1",
+      "title": "BinancePay",
+      "status": "active",
+      "node_type": "project",
+      "updated_at": "2026-03-19T06:48:06.661769+00:00"
+    },
+    {
+      "id": "task-bc1a73",
+      "title": "On-ramping 方案评估",
+      "status": "inbox",
+      "node_type": "task",
+      "updated_at": "2026-03-19T06:46:43.575079+00:00"
+    },
+    {
+      "id": "task-85b97c",
+      "title": "PSP 分润方案确定 + 邮件提交 Binance",
+      "status": "inbox",
+      "node_type": "task",
+      "updated_at": "2026-03-19T06:46:43.447353+00:00"
+    },
+    {
+      "id": "task-43a7ad",
+      "title": "注册 Binance TSP 账户 + KYB",
+      "status": "inbox",
+      "node_type": "task",
+      "updated_at": "2026-03-19T06:46:43.319899+00:00"
+    },
+    {
+      "id": "task-8570d3",
+      "title": "回复 Binance：5 区域 provider/timeline/rate/FX markup",
+      "status": "inbox",
+      "node_type": "task",
+      "updated_at": "2026-03-19T06:46:43.191583+00:00"
+    },
+    {
+      "id": "project-0e05",
+      "title": "支付系统",
+      "status": "dropped",
+      "node_type": "project",
+      "updated_at": "2026-03-19T06:46:31.697347+00:00"
+    },
+    {
+      "id": "task-d11b",
+      "title": "CTO Agent 实例化为独立 session",
+      "status": "active",
+      "node_type": "task",
+      "updated_at": "2026-03-18T09:31:36.294537+00:00"
+    },
+    {
+      "id": "task-f55534",
+      "title": "CTO Agent 装 Superpowers skills",
+      "status": "inbox",
+      "node_type": "task",
+      "updated_at": "2026-03-18T09:31:36.163301+00:00"
+    },
+    {
+      "id": "task-ab56cc",
+      "title": "预测性建议引擎",
+      "status": "inbox",
+      "node_type": "task",
+      "updated_at": "2026-03-18T09:31:25.667291+00:00"
+    }
+  ]
+}

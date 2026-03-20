@@ -403,18 +403,33 @@
         // 加载数据
         async function loadData() {
             try {
-                // 尝试从API获取数据（在本地服务器环境中）
+                // 首先尝试加载静态数据文件（GitHub Pages模式）
+                const staticResponse = await fetch('./static-data.json');
+                if (staticResponse.ok) {
+                    dashboardData = await staticResponse.json();
+                    console.log('Static data loaded successfully: ', dashboardData.tasks.length, 'tasks');
+                    renderDashboard();
+                    return;
+                }
+            } catch (error) {
+                console.log('Static data file not found, trying API...');
+            }
+
+            try {
+                // 然后尝试从API获取数据（本地服务器环境）
                 const response = await fetch('./api/data');
                 if (response.ok) {
                     dashboardData = await response.json();
                     console.log('API data loaded successfully');
-                } else {
-                    console.log('API not available, using default data');
+                    renderDashboard();
+                    return;
                 }
             } catch (error) {
-                console.log('Using static data (GitHub Pages mode)');
+                console.log('API not available, using fallback data');
             }
             
+            // 最后使用默认数据
+            console.log('Using hardcoded fallback data');
             renderDashboard();
         }
         
