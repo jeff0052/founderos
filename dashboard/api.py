@@ -78,12 +78,18 @@ try:
         recent_activity.sort(key=lambda x: x['updated_at'], reverse=True)
         recent_activity = recent_activity[:10]  # 最近10条
         
+        # 从所有项目中收集任务到顶层数组
+        all_tasks = []
+        for project in projects:
+            if 'tasks' in project:
+                all_tasks.extend(project['tasks'])
+        
         # 组装完整数据
         data = {
             'exported_at': datetime.now().isoformat(),
             'goals': goals,
             'projects': projects,
-            'tasks': tasks,
+            'tasks': all_tasks,  # 使用收集的所有任务
             'memories': memories,
             'stats': {
                 'task_distribution': task_distribution,
