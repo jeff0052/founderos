@@ -110,7 +110,7 @@
         
         .card-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 15px;
         }
@@ -140,148 +140,6 @@
             line-height: 1.5;
         }
         
-        .task-list {
-            margin-top: 15px;
-        }
-        
-        .task-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 12px;
-            margin: 5px 0;
-            background: #f8f9fa;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-        
-        .task-id {
-            font-family: monospace;
-            color: #999;
-            font-size: 12px;
-        }
-        
-        .filters {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .filter-group label {
-            font-weight: 500;
-            color: #555;
-        }
-        
-        .filter-group select,
-        .filter-group input {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            background: white;
-        }
-        
-        .search-box {
-            flex: 1;
-            min-width: 200px;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-        }
-        
-        .modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 800px;
-            max-height: 80vh;
-            overflow-y: auto;
-            width: 90%;
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #f0f0f0;
-            padding-bottom: 15px;
-        }
-        
-        .modal-title {
-            font-size: 1.5em;
-            color: #333;
-        }
-        
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #999;
-        }
-        
-        .close-btn:hover {
-            color: #333;
-        }
-        
-        .detail-section {
-            margin-bottom: 20px;
-        }
-        
-        .detail-section h3 {
-            color: #667eea;
-            margin-bottom: 10px;
-            font-size: 1.1em;
-        }
-        
-        .detail-content {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-        }
-        
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .breadcrumb a {
-            color: #667eea;
-            text-decoration: none;
-        }
-        
-        .breadcrumb a:hover {
-            text-decoration: underline;
-        }
-        
-        .breadcrumb-separator {
-            margin: 0 8px;
-            color: #999;
-        }
-        
         .chart-container {
             position: relative;
             height: 300px;
@@ -298,10 +156,6 @@
                 flex-direction: column;
             }
             
-            .filters {
-                flex-direction: column;
-            }
-            
             .data-grid {
                 grid-template-columns: 1fr;
             }
@@ -313,6 +167,11 @@
         <div class="header">
             <h1>FounderOS FPMS</h1>
             <p class="subtitle">分形项目管理系统 - 详细视图</p>
+            <div style="margin-top: 15px;">
+                <a href="index.html" style="display: inline-block; padding: 8px 16px; background: rgba(102, 126, 234, 0.1); color: #667eea; text-decoration: none; border-radius: 6px; border: 1px solid #667eea;">
+                    ← 返回主Dashboard
+                </a>
+            </div>
         </div>
         
         <div class="nav-tabs">
@@ -321,7 +180,6 @@
             <button class="nav-tab" onclick="showSection('projects')">📁 项目</button>
             <button class="nav-tab" onclick="showSection('tasks')">📝 任务</button>
             <button class="nav-tab" onclick="showSection('memory')">🧠 记忆</button>
-            <button class="nav-tab" onclick="showSection('analytics')">📈 分析</button>
         </div>
         
         <!-- 概览 -->
@@ -356,21 +214,6 @@
         
         <!-- 目标 -->
         <div id="goals" class="content-section">
-            <div class="filters">
-                <div class="filter-group">
-                    <label>状态:</label>
-                    <select id="goalStatusFilter">
-                        <option value="">全部</option>
-                        <option value="active">活跃</option>
-                        <option value="inbox">收件箱</option>
-                        <option value="done">完成</option>
-                        <option value="dropped">已放弃</option>
-                    </select>
-                </div>
-                <div class="filter-group search-box">
-                    <input type="text" id="goalSearchBox" placeholder="搜索目标...">
-                </div>
-            </div>
             <div id="goals-container" class="data-grid">
                 <!-- 动态填充 -->
             </div>
@@ -378,27 +221,6 @@
         
         <!-- 项目 -->
         <div id="projects" class="content-section">
-            <div class="filters">
-                <div class="filter-group">
-                    <label>状态:</label>
-                    <select id="projectStatusFilter">
-                        <option value="">全部</option>
-                        <option value="active">活跃</option>
-                        <option value="inbox">收件箱</option>
-                        <option value="done">完成</option>
-                        <option value="dropped">已放弃</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>目标:</label>
-                    <select id="projectGoalFilter">
-                        <option value="">全部目标</option>
-                    </select>
-                </div>
-                <div class="filter-group search-box">
-                    <input type="text" id="projectSearchBox" placeholder="搜索项目...">
-                </div>
-            </div>
             <div id="projects-container" class="data-grid">
                 <!-- 动态填充 -->
             </div>
@@ -406,27 +228,6 @@
         
         <!-- 任务 -->
         <div id="tasks" class="content-section">
-            <div class="filters">
-                <div class="filter-group">
-                    <label>状态:</label>
-                    <select id="taskStatusFilter">
-                        <option value="">全部</option>
-                        <option value="active">活跃</option>
-                        <option value="inbox">收件箱</option>
-                        <option value="done">完成</option>
-                        <option value="dropped">已放弃</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>项目:</label>
-                    <select id="taskProjectFilter">
-                        <option value="">全部项目</option>
-                    </select>
-                </div>
-                <div class="filter-group search-box">
-                    <input type="text" id="taskSearchBox" placeholder="搜索任务...">
-                </div>
-            </div>
             <div id="tasks-container" class="data-grid">
                 <!-- 动态填充 -->
             </div>
@@ -453,157 +254,177 @@
                 </div>
             </div>
         </div>
-        
-        <!-- 分析 -->
-        <div id="analytics" class="content-section">
-            <div class="data-grid">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">项目进度分析</h3>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="projectProgressChart"></canvas>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">时间线分析</h3>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="timelineChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- 详情模态框 -->
-    <div id="detailModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle">详情</h2>
-                <button class="close-btn" onclick="closeModal()">&times;</button>
-            </div>
-            <div id="modalBody">
-                <!-- 动态填充 -->
-            </div>
-        </div>
     </div>
 
     <script>
-        let dashboardData = null;
+        // 默认数据 - 在静态环境中使用
+        const defaultData = {
+            "exported_at": "2026-03-20T19:30:00.000000",
+            "goals": [
+                {
+                    "id": "goal-ced834",
+                    "title": "BinancePay",
+                    "status": "active",
+                    "summary": "支付公司核心业务 — 与 Binance 合作的支付项目。三条线：国家码支付、PSP/TSP 接入 Binance Pay、On-chain/On-ramping。FounderOS 第一个实战管理场景。",
+                    "updated_at": "2026-03-19T06:48:44.700245+00:00"
+                },
+                {
+                    "id": "goal-6c8a",
+                    "title": "FounderOS",
+                    "status": "active", 
+                    "summary": "一人公司的底层操作系统 — 让一个 Founder 通过 AI Office 体系管理整家公司。核心循环 State+Signal→Decision→Action→NewState。V3 阶段：FPMS（State）已建，CTO Agent（第一个 Office）待搭建。",
+                    "updated_at": "2026-03-17T15:43:44.076018+00:00"
+                }
+            ],
+            "projects": [
+                {
+                    "id": "project-4acae1",
+                    "title": "BinancePay",
+                    "status": "active",
+                    "summary": "与 Binance 的支付合作项目。三条线：1) 国家码支付合作（SG/PH/VN/JP/TH）2) PSP/TSP 接入 Binance Pay 3) On-chain/On-ramping 服务",
+                    "parent_id": "goal-ced834",
+                    "task_counts": {"inbox": 4},
+                    "total_tasks": 4,
+                    "tasks": [
+                        {
+                            "id": "task-8570d3",
+                            "title": "回复 Binance：5 区域 provider/timeline/rate/FX markup",
+                            "status": "inbox",
+                            "parent_id": "project-4acae1",
+                            "summary": "需要回复 Binance 关于5个区域的详细信息",
+                            "updated_at": "2026-03-19T06:46:43.191583+00:00"
+                        },
+                        {
+                            "id": "task-43a7ad",
+                            "title": "注册 Binance TSP 账户 + KYB", 
+                            "status": "inbox",
+                            "parent_id": "project-4acae1",
+                            "summary": "完成 Binance TSP 注册和 KYB 认证",
+                            "updated_at": "2026-03-19T06:46:43.319899+00:00"
+                        },
+                        {
+                            "id": "task-85b97c",
+                            "title": "PSP 分润方案确定 + 邮件提交 Binance",
+                            "status": "inbox",
+                            "parent_id": "project-4acae1", 
+                            "summary": "确定PSP分润方案并提交给 Binance",
+                            "updated_at": "2026-03-19T06:46:43.447353+00:00"
+                        },
+                        {
+                            "id": "task-bc1a73",
+                            "title": "On-ramping 方案评估",
+                            "status": "inbox",
+                            "parent_id": "project-4acae1",
+                            "summary": "评估 On-ramping 技术和商业方案", 
+                            "updated_at": "2026-03-19T06:46:43.575079+00:00"
+                        }
+                    ],
+                    "updated_at": "2026-03-19T06:48:06.661769+00:00"
+                },
+                {
+                    "id": "project-a501",
+                    "title": "CTO Agent",
+                    "status": "active",
+                    "summary": "能开发维护大型系统的 AI CTO — 从小开始，快速迭代，最终具备独立交付复杂产品的能力（如支付系统级别）",
+                    "parent_id": "goal-6c8a",
+                    "task_counts": {"active": 1, "done": 4, "inbox": 5},
+                    "total_tasks": 10,
+                    "tasks": [
+                        {
+                            "id": "task-d11b",
+                            "title": "CTO Agent 实例化为独立 session", 
+                            "status": "active",
+                            "parent_id": "project-a501",
+                            "summary": "将CTO Agent配置为独立的OpenClaw会话",
+                            "updated_at": "2026-03-18T09:31:36.294537+00:00"
+                        }
+                    ],
+                    "updated_at": "2026-03-17T15:00:28.640104+00:00"
+                },
+                {
+                    "id": "project-7842",
+                    "title": "FPMS 分形项目管理系统", 
+                    "status": "active",
+                    "summary": "AI Agent 确定性项目管理引擎，v1 已上线，边用边迭代",
+                    "parent_id": "goal-6c8a",
+                    "task_counts": {"done": 10, "inbox": 8},
+                    "total_tasks": 18,
+                    "tasks": [],
+                    "updated_at": "2026-03-17T14:39:28.034525+00:00"
+                }
+            ],
+            "tasks": [],
+            "memories": [
+                {
+                    "id": "mem-001", 
+                    "content": "FounderOS focus on 末那识 rather than task management",
+                    "layer": "judgment",
+                    "priority": "PP0",
+                    "updated_at": "2026-03-19T10:00:00+00:00"
+                }
+            ],
+            "stats": {
+                "task_distribution": {"active": 1, "done": 14, "inbox": 34},
+                "project_distribution": {"active": 3, "dropped": 1, "inbox": 3},
+                "memory_distribution": {
+                    "fact": {"PP0": 7, "PP1": 4},
+                    "judgment": {"PP0": 12, "PP1": 1},
+                    "scratch": {"PP1": 1, "PP2": 1}
+                },
+                "overview": {
+                    "total_nodes": 58,
+                    "total_goals": 2, 
+                    "total_projects": 7,
+                    "total_tasks": 49,
+                    "completed_tasks": 14,
+                    "completion_rate": 28.6
+                }
+            },
+            "recent_activity": [
+                {
+                    "id": "goal-ced834",
+                    "title": "BinancePay",
+                    "status": "active",
+                    "node_type": "goal",
+                    "updated_at": "2026-03-19T06:48:44.700245+00:00"
+                },
+                {
+                    "id": "project-4acae1",
+                    "title": "BinancePay", 
+                    "status": "active",
+                    "node_type": "project",
+                    "updated_at": "2026-03-19T06:48:06.661769+00:00"
+                }
+            ]
+        };
+        
+        let dashboardData = defaultData;
         
         // 加载数据
         async function loadData() {
             try {
-                // 尝试从API获取数据
+                // 尝试从API获取数据（在本地服务器环境中）
                 const response = await fetch('./api/data');
-                console.log('Fetching data...', response.status);
-                
                 if (response.ok) {
                     dashboardData = await response.json();
+                    console.log('API data loaded successfully');
                 } else {
-                    console.warn('API request failed, using fallback data');
-                    // 使用静态数据作为后备
-                    dashboardData = {
-                    "exported_at": "2026-03-20T19:18:28.438162",
-                    "goals": [
-                        {
-                            "id": "goal-ced834",
-                            "title": "BinancePay",
-                            "status": "active",
-                            "summary": "支付公司核心业务 — 与 Binance 合作的支付项目。三条线：国家码支付、PSP/TSP 接入 Binance Pay、On-chain/On-ramping。FounderOS 第一个实战管理场景。",
-                            "updated_at": "2026-03-19T06:48:44.700245+00:00"
-                        },
-                        {
-                            "id": "goal-6c8a",
-                            "title": "FounderOS",
-                            "status": "active",
-                            "summary": "一人公司的底层操作系统 — 让一个 Founder 通过 AI Office 体系管理整家公司。核心循环 State+Signal→Decision→Action→NewState。V3 阶段：FPMS（State）已建，CTO Agent（第一个 Office）待搭建。",
-                            "updated_at": "2026-03-17T15:43:44.076018+00:00"
-                        }
-                    ],
-                    "projects": [
-                        {
-                            "id": "project-4acae1",
-                            "title": "BinancePay",
-                            "status": "active",
-                            "summary": "与 Binance 的支付合作项目。三条线：1) 国家码支付合作（SG/PH/VN/JP/TH）2) PSP/TSP 接入 Binance Pay 3) On-chain/On-ramping 服务",
-                            "parent_id": "goal-ced834",
-                            "task_counts": { "inbox": 4 },
-                            "total_tasks": 4,
-                            "updated_at": "2026-03-19T06:48:06.661769+00:00"
-                        },
-                        {
-                            "id": "project-a501",
-                            "title": "CTO Agent",
-                            "status": "active",
-                            "summary": "能开发维护大型系统的 AI CTO — 从小开始，快速迭代，最终具备独立交付复杂产品的能力（如支付系统级别）",
-                            "parent_id": "goal-6c8a",
-                            "task_counts": { "active": 1, "done": 4, "inbox": 5 },
-                            "total_tasks": 10,
-                            "updated_at": "2026-03-17T15:00:28.640104+00:00"
-                        }
-                    ],
-                    "stats": {
-                        "overview": {
-                            "total_nodes": 58,
-                            "total_goals": 2,
-                            "total_projects": 7,
-                            "total_tasks": 49,
-                            "completed_tasks": 14,
-                            "completion_rate": 28.6
-                        },
-                        "task_distribution": { "active": 1, "done": 14, "inbox": 34 },
-                        "memory_distribution": {
-                            "fact": { "PP0": 7, "PP1": 4 },
-                            "judgment": { "PP0": 12, "PP1": 1 },
-                            "scratch": { "PP1": 1, "PP2": 1 }
-                        }
-                    }
-                    };
+                    console.log('API not available, using default data');
                 }
-                
-                console.log('Data loaded:', dashboardData);
-                renderDashboard();
             } catch (error) {
-                console.error('Error loading data:', error);
-                // 使用示例数据
-                if (!dashboardData) {
-                    dashboardData = {
-                        "exported_at": "2026-03-20T19:18:28.438162",
-                        "stats": {
-                            "overview": {
-                                "total_nodes": 0,
-                                "total_goals": 0,
-                                "total_projects": 0,
-                                "total_tasks": 0,
-                                "completed_tasks": 0,
-                                "completion_rate": 0
-                            },
-                            "task_distribution": {},
-                            "memory_distribution": {}
-                        },
-                        "goals": [],
-                        "projects": [],
-                        "tasks": [],
-                        "memories": []
-                    };
-                }
-                renderDashboard();
+                console.log('Using static data (GitHub Pages mode)');
             }
+            
+            renderDashboard();
         }
         
         // 渲染仪表板
         function renderDashboard() {
-            if (!dashboardData) return;
-            
             renderOverview();
             renderGoals();
-            renderProjects();
+            renderProjects(); 
             renderTasks();
             renderMemory();
-            renderAnalytics();
         }
         
         // 渲染概览
@@ -622,6 +443,20 @@
                 </div>
             `;
             
+            // 渲染最近活动
+            const recentEl = document.getElementById('recent-activity');
+            const activities = dashboardData.recent_activity?.slice(0, 5) || [];
+            
+            recentEl.innerHTML = activities.length ? activities.map(activity => `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
+                    <div>
+                        <div style="font-weight: 500;">${activity.title}</div>
+                        <div style="font-size: 12px; color: #999;">${activity.node_type} • ${formatDate(activity.updated_at)}</div>
+                    </div>
+                    <span class="status-badge status-${activity.status}">${activity.status}</span>
+                </div>
+            `).join('') : '<p style="color: #999; text-align: center;">暂无最近活动</p>';
+            
             // 绘制任务分布图
             renderTaskChart();
         }
@@ -632,13 +467,20 @@
             if (!ctx) return;
             
             const taskData = dashboardData.stats?.task_distribution || {};
+            const data = [taskData.active || 0, taskData.done || 0, taskData.inbox || 0];
+            const total = data.reduce((a, b) => a + b, 0);
+            
+            if (total === 0) {
+                ctx.getContext('2d').clearRect(0, 0, ctx.width, ctx.height);
+                return;
+            }
             
             new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: ['活跃', '完成', '收件箱'],
                     datasets: [{
-                        data: [taskData.active || 0, taskData.done || 0, taskData.inbox || 0],
+                        data: data,
                         backgroundColor: ['#4CAF50', '#2196F3', '#FF9800']
                     }]
                 },
@@ -659,20 +501,34 @@
             const container = document.getElementById('goals-container');
             const goals = dashboardData.goals || [];
             
-            container.innerHTML = goals.map(goal => `
-                <div class="card" onclick="showGoalDetail('${goal.id}')">
-                    <div class="card-header">
-                        <h3 class="card-title">${goal.title}</h3>
-                        <span class="status-badge status-${goal.status}">${goal.status}</span>
-                    </div>
-                    <div class="card-content">
-                        <p>${goal.summary || '无描述'}</p>
-                        <div style="margin-top: 10px; color: #999; font-size: 12px;">
-                            ID: ${goal.id} | 更新: ${formatDate(goal.updated_at)}
+            container.innerHTML = goals.length ? goals.map(goal => {
+                const relatedProjects = dashboardData.projects?.filter(p => p.parent_id === goal.id) || [];
+                
+                return `
+                    <div class="card" onclick="showGoalDetail('${goal.id}')">
+                        <div class="card-header">
+                            <h3 class="card-title">${goal.title}</h3>
+                            <span class="status-badge status-${goal.status}">${goal.status}</span>
+                        </div>
+                        <div class="card-content">
+                            <p>${goal.summary || '无描述'}</p>
+                            <div style="margin-top: 15px;">
+                                <strong>关联项目:</strong> ${relatedProjects.length} 个
+                                <div style="margin-top: 8px;">
+                                    ${relatedProjects.map(p => `
+                                        <span style="display: inline-block; margin: 2px; padding: 4px 8px; background: #f0f0f0; border-radius: 4px; font-size: 12px;">
+                                            ${p.title}
+                                        </span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            <div style="margin-top: 10px; color: #999; font-size: 12px;">
+                                ID: ${goal.id} | 更新: ${formatDate(goal.updated_at)}
+                            </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('') : '<div class="card"><div class="card-content" style="text-align: center; color: #999;">暂无目标数据</div></div>';
         }
         
         // 渲染项目
@@ -680,40 +536,70 @@
             const container = document.getElementById('projects-container');
             const projects = dashboardData.projects || [];
             
-            container.innerHTML = projects.map(project => `
-                <div class="card" onclick="showProjectDetail('${project.id}')">
-                    <div class="card-header">
-                        <h3 class="card-title">${project.title}</h3>
-                        <span class="status-badge status-${project.status}">${project.status}</span>
-                    </div>
-                    <div class="card-content">
-                        <p>${project.summary || '无描述'}</p>
-                        <div style="margin-top: 10px;">
-                            <strong>任务统计:</strong> ${project.total_tasks || 0} 总任务
-                            ${Object.entries(project.task_counts || {}).map(([status, count]) => 
-                                `<span class="status-badge status-${status}" style="margin-left: 8px;">${count} ${status}</span>`
-                            ).join('')}
+            container.innerHTML = projects.length ? projects.map(project => {
+                const parentGoal = dashboardData.goals?.find(g => g.id === project.parent_id);
+                
+                return `
+                    <div class="card" onclick="showProjectDetail('${project.id}')">
+                        <div class="card-header">
+                            <h3 class="card-title">${project.title}</h3>
+                            <span class="status-badge status-${project.status}">${project.status}</span>
                         </div>
-                        <div style="margin-top: 10px; color: #999; font-size: 12px;">
-                            ID: ${project.id} | 更新: ${formatDate(project.updated_at)}
+                        <div class="card-content">
+                            <p>${project.summary || '无描述'}</p>
+                            <div style="margin-top: 10px;">
+                                <div><strong>所属目标:</strong> ${parentGoal?.title || '未知'}</div>
+                                <div><strong>总任务:</strong> ${project.total_tasks || 0}</div>
+                            </div>
+                            <div style="margin-top: 10px;">
+                                <strong>任务分布:</strong>
+                                ${Object.entries(project.task_counts || {}).map(([status, count]) => 
+                                    `<span class="status-badge status-${status}" style="margin-left: 8px;">${count} ${status}</span>`
+                                ).join('')}
+                            </div>
+                            <div style="margin-top: 10px; color: #999; font-size: 12px;">
+                                ID: ${project.id} | 更新: ${formatDate(project.updated_at)}
+                            </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('') : '<div class="card"><div class="card-content" style="text-align: center; color: #999;">暂无项目数据</div></div>';
         }
         
         // 渲染任务
         function renderTasks() {
             const container = document.getElementById('tasks-container');
-            // 这里应该有任务数据，暂时显示空状态
-            container.innerHTML = `
+            let allTasks = [];
+            
+            // 从所有项目中收集任务
+            if (dashboardData.projects) {
+                dashboardData.projects.forEach(project => {
+                    if (project.tasks) {
+                        allTasks = allTasks.concat(project.tasks.map(task => ({
+                            ...task,
+                            project_title: project.title
+                        })));
+                    }
+                });
+            }
+            
+            container.innerHTML = allTasks.length ? allTasks.map(task => `
                 <div class="card">
-                    <div class="card-content" style="text-align: center; color: #999;">
-                        <p>任务详情数据正在加载...</p>
-                        <p>请从项目页面点击查看具体任务</p>
+                    <div class="card-header">
+                        <h3 class="card-title">${task.title}</h3>
+                        <span class="status-badge status-${task.status}">${task.status}</span>
+                    </div>
+                    <div class="card-content">
+                        <p>${task.summary || '无描述'}</p>
+                        <div style="margin-top: 10px;">
+                            <strong>所属项目:</strong> ${task.project_title || '未知'}
+                        </div>
+                        <div style="margin-top: 10px; color: #999; font-size: 12px;">
+                            ID: ${task.id} | 更新: ${formatDate(task.updated_at)}
+                        </div>
                     </div>
                 </div>
-            `;
+            `).join('') : '<div class="card"><div class="card-content" style="text-align: center; color: #999;">暂无任务数据</div></div>';
         }
         
         // 渲染记忆
@@ -751,13 +637,16 @@
             const data = [];
             const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'];
             
-            let colorIndex = 0;
             Object.entries(memoryData).forEach(([type, priorities]) => {
                 Object.entries(priorities).forEach(([priority, count]) => {
                     labels.push(`${type} ${priority}`);
                     data.push(count);
                 });
             });
+            
+            if (data.length === 0) {
+                return;
+            }
             
             new Chart(ctx, {
                 type: 'bar',
@@ -781,84 +670,14 @@
             });
         }
         
-        // 渲染分析
-        function renderAnalytics() {
-            // 项目进度分析
-            renderProjectProgressChart();
-        }
-        
-        // 渲染项目进度图表
-        function renderProjectProgressChart() {
-            const ctx = document.getElementById('projectProgressChart');
-            if (!ctx) return;
-            
-            const projects = dashboardData.projects || [];
-            const labels = projects.map(p => p.title);
-            const data = projects.map(p => {
-                const total = p.total_tasks || 0;
-                const done = p.task_counts?.done || 0;
-                return total > 0 ? (done / total * 100).toFixed(1) : 0;
-            });
-            
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: '完成率 (%)',
-                        data: data,
-                        backgroundColor: '#4CAF50'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100
-                        }
-                    }
-                }
-            });
-        }
-        
-        // 显示节详情
+        // 显示目标详情
         function showGoalDetail(goalId) {
             const goal = dashboardData.goals?.find(g => g.id === goalId);
             if (!goal) return;
             
             const projects = dashboardData.projects?.filter(p => p.parent_id === goalId) || [];
             
-            showModal(`目标详情: ${goal.title}`, `
-                <div class="detail-section">
-                    <h3>基本信息</h3>
-                    <div class="detail-content">
-                        <p><strong>ID:</strong> ${goal.id}</p>
-                        <p><strong>状态:</strong> <span class="status-badge status-${goal.status}">${goal.status}</span></p>
-                        <p><strong>更新时间:</strong> ${formatDate(goal.updated_at)}</p>
-                    </div>
-                </div>
-                
-                <div class="detail-section">
-                    <h3>描述</h3>
-                    <div class="detail-content">
-                        ${goal.summary || '暂无描述'}
-                    </div>
-                </div>
-                
-                <div class="detail-section">
-                    <h3>关联项目 (${projects.length})</h3>
-                    <div class="detail-content">
-                        ${projects.length > 0 ? projects.map(p => `
-                            <div class="task-item" onclick="showProjectDetail('${p.id}')">
-                                <span>${p.title}</span>
-                                <span class="status-badge status-${p.status}">${p.status}</span>
-                            </div>
-                        `).join('') : '<p>暂无关联项目</p>'}
-                    </div>
-                </div>
-            `);
+            alert(`目标详情: ${goal.title}\n\n描述: ${goal.summary}\n状态: ${goal.status}\n关联项目: ${projects.length}个`);
         }
         
         // 显示项目详情
@@ -867,58 +686,9 @@
             if (!project) return;
             
             const parentGoal = dashboardData.goals?.find(g => g.id === project.parent_id);
+            const taskInfo = Object.entries(project.task_counts || {}).map(([status, count]) => `${status}: ${count}`).join(', ');
             
-            showModal(`项目详情: ${project.title}`, `
-                ${parentGoal ? `
-                    <div class="breadcrumb">
-                        <a href="#" onclick="showGoalDetail('${parentGoal.id}')">${parentGoal.title}</a>
-                        <span class="breadcrumb-separator">></span>
-                        <span>${project.title}</span>
-                    </div>
-                ` : ''}
-                
-                <div class="detail-section">
-                    <h3>基本信息</h3>
-                    <div class="detail-content">
-                        <p><strong>ID:</strong> ${project.id}</p>
-                        <p><strong>状态:</strong> <span class="status-badge status-${project.status}">${project.status}</span></p>
-                        <p><strong>所属目标:</strong> ${parentGoal?.title || '未知'}</p>
-                        <p><strong>总任务数:</strong> ${project.total_tasks || 0}</p>
-                        <p><strong>更新时间:</strong> ${formatDate(project.updated_at)}</p>
-                    </div>
-                </div>
-                
-                <div class="detail-section">
-                    <h3>描述</h3>
-                    <div class="detail-content">
-                        ${project.summary || '暂无描述'}
-                    </div>
-                </div>
-                
-                <div class="detail-section">
-                    <h3>任务统计</h3>
-                    <div class="detail-content">
-                        ${Object.entries(project.task_counts || {}).map(([status, count]) => `
-                            <div class="task-item">
-                                <span>${status.toUpperCase()}</span>
-                                <span class="status-badge status-${status}">${count}</span>
-                            </div>
-                        `).join('') || '<p>暂无任务数据</p>'}
-                    </div>
-                </div>
-            `);
-        }
-        
-        // 显示模态框
-        function showModal(title, content) {
-            document.getElementById('modalTitle').textContent = title;
-            document.getElementById('modalBody').innerHTML = content;
-            document.getElementById('detailModal').style.display = 'block';
-        }
-        
-        // 关闭模态框
-        function closeModal() {
-            document.getElementById('detailModal').style.display = 'none';
+            alert(`项目详情: ${project.title}\n\n描述: ${project.summary}\n状态: ${project.status}\n所属目标: ${parentGoal?.title || '未知'}\n任务统计: ${taskInfo}\n总任务: ${project.total_tasks || 0}`);
         }
         
         // 切换页面
@@ -944,14 +714,6 @@
         function formatDate(dateStr) {
             if (!dateStr) return '未知';
             return new Date(dateStr).toLocaleString('zh-CN');
-        }
-        
-        // 点击模态框外部关闭
-        window.onclick = function(event) {
-            const modal = document.getElementById('detailModal');
-            if (event.target === modal) {
-                closeModal();
-            }
         }
         
         // 初始化
