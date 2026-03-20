@@ -23,6 +23,7 @@ from spine.store import Store
 from spine.command_executor import CommandExecutor
 from spine.memory import MemoryStore, MemoryValidationError, MemoryStateError
 from spine.models import AddMemoryInput
+from spine.ai_memory_tools import AIMemoryTools
 
 # ── Paths (same as spine.py) ──
 
@@ -52,6 +53,9 @@ def _get_executor() -> tuple[Store, CommandExecutor]:
 # Initialize FPMS
 store, executor = _get_executor()
 memory_store = MemoryStore(store)
+
+# Initialize AI Memory System  
+ai_memory_tools = AIMemoryTools(DB_PATH)
 
 # Create FastMCP app
 app = FastMCP("FPMS MCP Server")
@@ -520,6 +524,100 @@ def confirm_memory(memory_id: str) -> Dict[str, Any]:
         return {"success": False, "error": str(e)}
     except Exception as e:
         return {"success": False, "error": f"Unexpected: {e}"}
+
+
+# ── AI助手记忆工具 ──
+
+@app.tool()
+def ai_memory_search(
+    query: str,
+    layers: Optional[list] = None,
+    limit: int = 10
+) -> Dict[str, Any]:
+    """搜索AI助手记忆
+    
+    Args:
+        query: 搜索话题
+        layers: 要搜索的记忆层级 ['constitution', 'fact', 'judgment', 'office_memory', 'narrative', 'temporary']
+        limit: 返回条数限制
+    """
+    return ai_memory_tools.memory_search(query, layers, limit)
+
+
+@app.tool()
+def ai_load_context(
+    session_id: str,
+    topic: str,
+    include_layers: Optional[list] = None
+) -> Dict[str, Any]:
+    """加载AI助手Context Bundle (DCP核心功能)
+    
+    Args:
+        session_id: 会话ID
+        topic: 当前话题  
+        include_layers: 要包含的记忆层级
+    """
+    return ai_memory_tools.load_context(session_id, topic, include_layers)
+
+
+@app.tool()
+def ai_store_memory(
+    layer: str,
+    topic: str,
+    content: str,
+    relevance_score: float = 1.0,
+    metadata: Optional[Dict] = None
+) -> Dict[str, Any]:
+    """存储AI助手记忆
+    
+    Args:
+        layer: 记忆层级 ['constitution', 'fact', 'judgment', 'office_memory', 'narrative', 'temporary']
+        topic: 话题分类
+        content: 记忆内容
+        relevance_score: 相关性分数 (0-1)
+        metadata: 扩展元数据
+    """
+    return ai_memory_tools.store_memory(layer, topic, content, relevance_score, metadata)
+
+
+@app.tool()
+def ai_expand_context(
+    session_id: str,
+    current_topic: str,
+    search_query: str,
+    additional_layers: Optional[list] = None
+) -> Dict[str, Any]:
+    """动态扩展Context (按需检索)
+    
+    Args:
+        session_id: 会话ID
+        current_topic: 当前话题
+        search_query: 搜索查询
+        additional_layers: 额外搜索的层级
+    """
+    return ai_memory_tools.expand_context(session_id, current_topic, search_query, additional_layers)
+
+
+@app.tool()
+def ai_update_conversation(
+    session_id: str,
+    topic: str,
+    conversation_summary: str,
+    new_insights: Optional[list] = None,
+    decisions_made: Optional[list] = None
+) -> Dict[str, Any]:
+    """更新对话记忆
+    
+    Args:
+        session_id: 会话ID
+        topic: 话题
+        conversation_summary: 对话摘要
+        new_insights: 新洞察列表
+        decisions_made: 新决策列表
+    """
+    return ai_memory_tools.update_conversation_memory(
+        session_id, topic, conversation_summary, new_insights, decisions_made
+    )
 
 
 # ── Main Entry Point ──
